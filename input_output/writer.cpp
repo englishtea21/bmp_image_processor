@@ -40,4 +40,19 @@ void input_output::Writer::Write(const ImageBMP& image_bmp) {
     unsigned char dib_header[image::utils::DIB_HEADER_SIZE] = {};
     std::fill(dib_header, dib_header + image::utils::DIB_HEADER_SIZE, 0);
     WriteDIBHeader(dib_header, image_bmp.GetWidth(), image_bmp.GetHeight());
+
+    img_file.write(reinterpret_cast<char*>(bmp_header), image::utils::BMP_HEADER_SIZE);
+    img_file.write(reinterpret_cast<char*>(dib_header), image::utils::DIB_HEADER_SIZE);
+
+    unsigned char empty_pix[image::utils::BYTES_PER_PIXEL] = {0, 0, 0};
+    for (size_t i = 0; i < image_bmp.GetHeight(); i++) {
+        for (size_t j = 0; j < image_bmp.GetWidth(); j++) {
+            unsigned char blue = static_cast<unsigned char>(image_bmp.GeImagePixel(i, j).blue_);
+            unsigned char green = static_cast<unsigned char>(image_bmp.GeImagePixel(i, j).green_);
+            unsigned char red = static_cast<unsigned char>(image_bmp.GeImagePixel(i, j).red_);
+            unsigned char pix[] = {blue, green, red};
+            img_file.write(reinterpret_cast<char*>(pix), image::utils::BYTES_PER_PIXEL);
+        }
+        img_file.write(reinterpret_cast<char*>(empty_pix), GetPaddingSize(image_bmp.GetWidth()));
+    }
 }

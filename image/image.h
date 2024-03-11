@@ -30,6 +30,6 @@ private:
     std::vector<std::vector<Color>> imgae_pixels_;
 
     void CheckCoordsBoundings(size_t x, size_t y) const;
-}
+};
 
 #endif  // IMAGE_H

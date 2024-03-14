@@ -5,7 +5,7 @@ input_output::Reader::Reader(const std::string& filename) {
     path_ = filename;
 }
 
-const size_t input_output::Reader::GetPaddingSize(size_t width) {
+const size_t input_output::GetPaddingSize(size_t width) {
     return (image::utils::PADDING_SIZE - (width * image::utils::BYTES_PER_PIXEL) % image::utils::PADDING_SIZE) %
            image::utils::PADDING_SIZE;
 }

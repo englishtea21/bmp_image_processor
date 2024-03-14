@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <cstddef>
 #include <vector>
+#include "../exceptions/exceptions.h"
 
 #include "color.h"
 
@@ -20,7 +21,7 @@ public:
     const std::vector<std::vector<Color>>& GetImagePixels() const;
     const Color& GeImagePixel(size_t x, size_t y) const;
 
-    Color& GeImagePixel(size_t x, size_t y);
+    // Color& GeImagePixel(size_t x, size_t y);
     void SetPixel(size_t x, size_t y, const Color& color);
 
 private:

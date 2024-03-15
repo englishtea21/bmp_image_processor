@@ -30,5 +30,10 @@ public:
     ImageBMP Apply(const ImageBMP& image) const;
 };
 
+class Grayscale : public Filter {
+public:
+    ImageBMP Apply(const ImageBMP& image) const;
+};
+
 std::unique_ptr<Filter> CreateFilter(const parser::Token& token);
 }  // namespace filters

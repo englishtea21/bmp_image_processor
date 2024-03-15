@@ -10,15 +10,19 @@ public:
 
     void SetPixel(T blue, T green, T red);
 
+    T GetBlue();
+    T GetGreen();
+    T GetRed();
+
     template <typename U>
     Pixel<U> NormalizePixel(const uint8_t max_color = 255);
 
     template <typename U>
     Pixel<T> MultiplyPixel(U mult);
 
-    Pixel<T>& operator+=(Pixel<T>& other);
+    Pixel<T>& operator+=(const Pixel<T> other) const;
 
-    Pixel<T>& operator-(const Pixel<T>& lhs, const Pixel<T>& rhs);
+    Pixel<T>& operator-=(const Pixel<T>& other) const;
 
 private:
     T blue_;

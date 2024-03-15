@@ -7,6 +7,7 @@
 
 namespace filters::utils::matrices {
 const std::vector<std::vector<int>> sharpenning = {{0, -1, 0}, {-1, 5, -1}, {0, -1, 0}};
+const std::vector<double> grayscale_color_ratio = {0.114, 0.587, 0.299};
 }  // namespace filters::utils::matrices
 
 namespace filters::utils::pixels {

@@ -15,6 +15,21 @@ void Pixel<T>::SetPixel(T blue, T green, T red) {
 }
 
 template <typename T>
+T Pixel<T>::GetBlue() {
+    return blue_
+}
+
+template <typename T>
+T Pixel<T>::GetGreen() {
+    return green_;
+}
+
+template <typename T>
+T Pixel<T>::GetRed() {
+    return red_;
+}
+
+template <typename T>
 template <typename U>
 Pixel<U> Pixel<T>::NormalizePixel(const uint8_t max_color) {
     Pixel<U> normalized_pixel;
@@ -38,14 +53,11 @@ Pixel<T> Pixel<T>::MultiplyPixel(U mult) {
 }
 
 template <typename T>
-Pixel<T>& Pixel<T>::operator+=(Pixel<T>& other) {
-    blue_ += other.blue_;
-    green_ += other.green_;
-    red_ += other.red_;
-
-    return *this;
+Pixel<T>& Pixel<T>::operator+=(const Pixel<T> other) const {
+    return {blue_ + other.blue_, green_ + other.green_, red_ + other.red_};
 }
 
 template <typename T>
-Pixel<T> Pixel<T>::operator-(const Pixel<T>& lhs, const Pixel<T>& rhs) {
+Pixel<T>& Pixel<T>::operator-=(const Pixel<T>& other) const {
+    return {blue_ - other.blue_, green_ - other.green_, red_ - other.red_};
 }

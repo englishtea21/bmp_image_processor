@@ -37,7 +37,28 @@ ImageBMP Negative::Apply(const ImageBMP& image) const {
     for (size_t i = 0; i < image.GetHeight(); ++i) {
         std::vector<Pixel<uint8_t>> row(image.GetWidth());
         for (size_t j = 0; j < image.GetWidth(); j++) {
-            row[j] = filters::utils::pixels::white - image.GeImagePixel(i, j);
+            row[j] = filters::utils::pixels::white;
+            row[j] -= image.GeImagePixel(i, j);
+        }
+        new_data.push_back(row);
+    }
+    return {new_data};
+}
+
+ImageBMP Grayscale::Apply(const ImageBMP& image) const {
+    std::vector<std::vector<Pixel<uint8_t>>> new_data;
+
+    for (size_t i = 0; i < image.GetHeight(); ++i) {
+        std::vector<Pixel<uint8_t>> row(image.GetWidth());
+        for (size_t j = 0; j < image.GetWidth(); j++) {
+            Pixel<uint8_t> tmp_pixel = image.GeImagePixel(i, j);
+            tmp_pixel.SetPixel(static_cast<uint8_t>(filters::utils::matrices::grayscale_color_ratio[0] *
+                                                    static_cast<double>(tmp_pixel.GetBlue())),
+                               static_cast<uint8_t>(filters::utils::matrices::grayscale_color_ratio[1] *
+                                                    static_cast<double>(tmp_pixel.GetGreen())),
+                               static_cast<uint8_t>(filters::utils::matrices::grayscale_color_ratio[2] *
+                                                    static_cast<double>(tmp_pixel.GetRed())));
+            row[j] = tmp_pixel;
         }
         new_data.push_back(row);
     }
@@ -51,6 +72,18 @@ std::unique_ptr<Filter> CreateFilter(const parser::Token& token) {
             throw std::invalid_argument("Too many arguments for filter \"" + filter + "\"");
         }
         auto ptr = std::make_unique<Sharpening>();
+        return ptr;
+    } else if (filter == "-neg") {
+        if (!token.args.empty()) {
+            throw std::invalid_argument("Too many arguments for filter \"" + filter + "\"");
+        }
+        auto ptr = std::make_unique<Negative>();
+        return ptr;
+    } else if (filter == "-gs") {
+        if (!token.args.empty()) {
+            throw std::invalid_argument("Too many arguments for filter \"" + filter + "\"");
+        }
+        auto ptr = std::make_unique<Grayscale>();
         return ptr;
     } else {
         throw std::invalid_argument("Unknown filter: \"" + filter + "\"");

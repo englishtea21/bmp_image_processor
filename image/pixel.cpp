@@ -45,3 +45,7 @@ Pixel<T>& Pixel<T>::operator+=(Pixel<T>& other) {
 
     return *this;
 }
+
+template <typename T>
+Pixel<T> Pixel<T>::operator-(const Pixel<T>& lhs, const Pixel<T>& rhs) {
+}

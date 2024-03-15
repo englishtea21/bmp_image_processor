@@ -3,13 +3,10 @@
 #include <cstdint>
 
 template <typename T = uint8_t>
-struct Pixel {
+class Pixel {
+public:
     Pixel() = default;
     Pixel(T blue, T green, T red);
-
-    T blue_;
-    T green_;
-    T red_;
 
     void SetPixel(T blue, T green, T red);
 
@@ -21,5 +18,10 @@ struct Pixel {
 
     Pixel<T>& operator+=(Pixel<T>& other);
 
-    Pixel<T> operator+(const Pixel<T> lhs, const Pixel<T> rhs);
+    Pixel<T>& operator-(const Pixel<T>& lhs, const Pixel<T>& rhs);
+
+private:
+    T blue_;
+    T green_;
+    T red_;
 };

@@ -46,8 +46,8 @@ ImageBMP input_output::Reader::Read() {
             for (size_t j = 0; j < width; ++j) {
                 unsigned char pix[image::utils::BITS_PER_PIXEL];
                 img_file.read(reinterpret_cast<char*>(pix), image::utils::BYTES_PER_PIXEL);
-                row[j].SetColor(static_cast<uint8_t>(pix[0]), static_cast<uint8_t>(pix[1]),
-                                static_cast<uint8_t>(pix[2]));
+                row[j].SetPixel(static_cast<T>(pix[0]), static_cast<T>(pix[1]),
+                                static_cast<T>(pix[2]));
             }
             data[i] = row;
             img_file.ignore(GetPaddingSize(width));

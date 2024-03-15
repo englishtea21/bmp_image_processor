@@ -15,7 +15,6 @@ const int HEIGHT_POSITION = 8;
 const int FORMAT_FIRST_POSITION = 0;
 const int FORMAT_SECOND_POSITION = 1;
 const int PIXS_ARRAY_OFFSET_POSITION = 10;
-// conts int
 
 const std::vector<char> BMP_SIGNAME = {'B', 'M'};
 const std::vector<size_t> SHIFT_BITS{8, 16, 24};

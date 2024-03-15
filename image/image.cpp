@@ -3,10 +3,10 @@
 ImageBMP::ImageBMP(size_t width, size_t height) {
     width_ = width;
     height_ = height;
-    this->image_pixels_ = std::vector<std::vector<Color>>(height);
+    this->image_pixels_ = std::vector<std::vector<Pixel<uint8_t>>>(height);
 }
 
-ImageBMP::ImageBMP(const std::vector<std::vector<Color>>& image_pixels) {
+ImageBMP::ImageBMP(const std::vector<std::vector<Pixel<uint8_t>>>& image_pixels) {
     this->height_ = image_pixels.size();
     this->width_ = image_pixels.front().size();
 
@@ -24,7 +24,7 @@ size_t ImageBMP::GetHeight() const {
     return this->height_;
 }
 
-const std::vector<std::vector<Color>>& ImageBMP::GetImagePixels() const {
+const std::vector<std::vector<Pixel<uint8_t>>>& ImageBMP::GetImagePixels() const {
     return this->image_pixels_;
 }
 
@@ -34,12 +34,12 @@ void ImageBMP::CheckCoordsBoundings(size_t x, size_t y) const {
     }
 }
 
-const Color& ImageBMP::GeImagePixel(size_t x, size_t y) const {
+const Pixel<uint8_t>& ImageBMP::GeImagePixel(size_t x, size_t y) const {
     CheckCoordsBoundings(x, y);
     return this->image_pixels_[x][y];
 }
 
-void ImageBMP::SetPixel(size_t x, size_t y, const Color& color) {
+void ImageBMP::SetPixel(size_t x, size_t y, const Pixel<uint8_t>& color) {
     CheckCoordsBoundings(x, y);
     this->image_pixels_[x][y] = color;
 }

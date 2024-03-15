@@ -16,16 +16,19 @@ public:
 
 protected:
     template <typename T>
-    std::vector<T> GetPixel(const std::vector<std::vector<T>>& matrix, const ImageBMP& image_bmp, size_t x,
-                            size_t y) const;
+    Pixel<T> filters::Filter::GetPixel(const std::vector<std::vector<T>>& matrix, const ImageBMP& image_bmp, size_t x,
+                                       size_t y) const;
 };
 
 class Sharpening : public Filter {
 public:
-    ImageBMP Apply(const ImageBMP& image) const override;
+    ImageBMP Apply(const ImageBMP& image) const;
 };
 
-uint8_t NormalizeColor(int color, const uint8_t max_color = 255);
+class Negative : public Filter {
+public:
+    ImageBMP Apply(const ImageBMP& image) const;
+};
 
 std::unique_ptr<Filter> CreateFilter(const parser::Token& token);
 }  // namespace filters

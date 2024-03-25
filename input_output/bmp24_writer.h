@@ -8,10 +8,10 @@
 #include "bmp24_reader.h"
 
 namespace input_output {
-class WriterBMP24 {
+class WriterBmp24 {
 public:
-    WriterBMP24(std::string path);
-    void Write(const ImageBMP &image_bmp);
+    explicit WriterBmp24(std::string path);
+    void Write(const ImageBmp &image_bmp);
 
 private:
     std::string path_;

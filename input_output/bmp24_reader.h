@@ -9,11 +9,11 @@
 
 namespace input_output {
 
-class ReaderBMP24 {
+class ReaderBmp24 {
 public:
-    ReaderBMP24(const std::string &filename);
+    explicit ReaderBmp24(const std::string &filename);
 
-    ImageBMP Read();
+    ImageBmp Read();
 
 private:
     std::string path_;

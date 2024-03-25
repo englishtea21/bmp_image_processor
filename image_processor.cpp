@@ -3,7 +3,7 @@
 int main(int argc, char *argv[]) {
     try {
         std::vector<parser::Token> tokens = GetTokens(argc, argv);
-        ImageBMP image_bmp = GetImage(tokens[0].name);
+        ImageBmp image_bmp = GetImage(tokens[0].name);
         ApplyFilters(image_bmp, tokens);
         WriteImage(image_bmp, tokens[1].name);
     } catch (const std::exception &e) {
@@ -19,16 +19,16 @@ std::vector<parser::Token> GetTokens(int argc, char *argv[]) {
     }
     return tokens;
 }
-ImageBMP GetImage(const std::string &path) {
-    input_output::ReaderBMP24 reader(path);
-    ImageBMP image_bmp = reader.Read();
+ImageBmp GetImage(const std::string &path) {
+    input_output::ReaderBmp24 reader(path);
+    ImageBmp image_bmp = reader.Read();
     return image_bmp;
 }
-void WriteImage(const ImageBMP &image_bmp, const std::string &path) {
-    input_output::WriterBMP24 writer(path);
+void WriteImage(const ImageBmp &image_bmp, const std::string &path) {
+    input_output::WriterBmp24 writer(path);
     writer.Write(image_bmp);
 }
-void ApplyFilters(ImageBMP &image, const std::vector<parser::Token> &tokens) {
+void ApplyFilters(ImageBmp &image, const std::vector<parser::Token> &tokens) {
     for (size_t i = 2; i < tokens.size(); i++) {
         image = filters::CreateFilter(tokens[i])->Apply(image);
     }

@@ -15,7 +15,7 @@ public:
     Pixel(T blue, T green, T red);
 
     template <typename U>
-    Pixel(const Pixel<U> &pixel);
+    explicit Pixel(const Pixel<U> &pixel);
 
     Pixel &operator=(const Pixel &other);
 

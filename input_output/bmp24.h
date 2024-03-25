@@ -13,21 +13,21 @@ size_t BytesToNum(const unsigned char *bytes);
 
 const size_t GetPaddingSize(size_t width);
 
-struct BMP24Header {
+struct Bmp24Header {
 public:
-    BMP24Header(size_t image_width, size_t image_height);
-    BMP24Header(unsigned char bmp24_header_bytes[utils::HEADER_SIZE], std::string_view path);
-    unsigned char *GetBMP24HeaderBytes();
+    Bmp24Header(size_t image_width, size_t image_height);
+    Bmp24Header(unsigned char bmp24_header_bytes[utils::HEADER_SIZE], std::string_view path);
+    unsigned char *GetBmp24HeaderBytes();
 
 private:
     unsigned char bmp24_header_bytes_[utils::HEADER_SIZE] = {};
 };
 
-struct BMP24DIB_Header {
+struct Bmp24DibHeader {
 public:
-    BMP24DIB_Header(size_t image_width, size_t image_height);
-    BMP24DIB_Header(unsigned char *bmp24_dib_header_bytes);
-    unsigned char *GetBMP24DIB_HeaderBytes();
+    Bmp24DibHeader(size_t image_width, size_t image_height);
+    explicit Bmp24DibHeader(unsigned char *bmp24_dib_header_bytes);
+    unsigned char *GetBmp24DibHeaderBytes();
     size_t GetWidth() const;
     size_t GetHeight() const;
 

@@ -6,7 +6,7 @@ Crop::Crop(size_t crop_width, size_t crop_height) {
     this->crop_height_ = crop_height;
 }
 
-ImageBMP Crop::Apply(const ImageBMP &image) {
+ImageBmp Crop::Apply(const ImageBmp &image) {
     size_t actual_crop_width = std::clamp(crop_width_, static_cast<size_t>(0), image.GetWidth());
     size_t actual_crop_height = std::clamp(crop_height_, static_cast<size_t>(0), image.GetHeight());
 
@@ -19,24 +19,24 @@ ImageBMP Crop::Apply(const ImageBMP &image) {
         }
         new_data[i] = std::move(row);
     }
-    return {new_data};
+    return ImageBmp{new_data};
 }
 
-Pixel<uint8_t> Grayscale::GetPixel(const ImageBMP &image, size_t y, size_t x) const {
+Pixel<uint8_t> Grayscale::GetPixel(const ImageBmp &image, size_t y, size_t x) const {
     Pixel<double> tmp_pixel(image.GetImagePixel(y, x));
 
     tmp_pixel.SetPixel(filters::utils::matrices::GRAYSCALE_COLOR_RATIO[0] * static_cast<double>(tmp_pixel.GetBlue()) +
                        filters::utils::matrices::GRAYSCALE_COLOR_RATIO[1] * static_cast<double>(tmp_pixel.GetGreen()) +
                        filters::utils::matrices::GRAYSCALE_COLOR_RATIO[2] * static_cast<double>(tmp_pixel.GetRed()));
 
-    return tmp_pixel;
+    return Pixel<uint8_t>(tmp_pixel);
 }
 
-Pixel<uint8_t> Negative::GetPixel(const ImageBMP &image, size_t y, size_t x) const {
+Pixel<uint8_t> Negative::GetPixel(const ImageBmp &image, size_t y, size_t x) const {
     Pixel<double> tmp_pixel(filters::utils::pixels::WHITE);
-    tmp_pixel -= image.GetImagePixel(y, x);
+    tmp_pixel -= Pixel<double>(image.GetImagePixel(y, x));
 
-    return tmp_pixel;
+    return Pixel<uint8_t>(tmp_pixel);
 }
 
 Sharpening::Sharpening() : ConvolutionalFilter(filters::utils::matrices::SHARPENNING) {
@@ -46,9 +46,9 @@ EdgeDetection::EdgeDetection(double threshold) : ConvolutionalFilter(filters::ut
     this->threshold_ = threshold;
 }
 
-ImageBMP EdgeDetection::Apply(const ImageBMP &image) {
+ImageBmp EdgeDetection::Apply(const ImageBmp &image) {
     Grayscale grayscaler;
-    ImageBMP image_tmp = grayscaler.Apply(image);
+    ImageBmp image_tmp = grayscaler.Apply(image);
 
     image_tmp = ConvolutionalFilter::Apply(std::move(image_tmp));
 
@@ -64,15 +64,16 @@ ImageBMP EdgeDetection::Apply(const ImageBMP &image) {
 }
 
 GaussianBlur::GaussianBlur(double sigma) {
-    this->kernel_optimal_size_ = static_cast<size_t>(6 * sigma);
-    this->kernel_optimal_size_ += 1 ? kernel_optimal_size_ % 2 == 0 : 0;
+    this->kernel_optimal_size_ =
+        static_cast<size_t>(filters::utils::gaussian_blur::ENOUGH_KERNEL_SIZE_IN_SIGMAS * sigma);
+    this->kernel_optimal_size_ += kernel_optimal_size_ % 2 == 0 ? 1 : 0;
     this->sigma_square_ = sigma * sigma;
     this->gaussian_denominator_ = 2 * std::numbers::pi * this->sigma_square_;
 
     conv_matrix_ = Generate1DGaussianKernel();
 }
 
-ImageBMP GaussianBlur::Apply(const ImageBMP &image) {
+ImageBmp GaussianBlur::Apply(const ImageBmp &image) {
     std::vector<std::vector<Pixel<double>>> new_data_tmp(image.GetHeight());
 
     // apply kernel horizontally
@@ -104,7 +105,7 @@ ImageBMP GaussianBlur::Apply(const ImageBMP &image) {
         new_data[i] = std::move(row);
     }
 
-    return {new_data};
+    return ImageBmp{new_data};
 }
 
 std::vector<std::vector<double>> GaussianBlur::Generate1DGaussianKernel() const {
@@ -123,23 +124,26 @@ Pixelization::Pixelization(size_t window_size) {
     this->window_size_ = window_size;
 }
 
-ImageBMP Pixelization::Apply(const ImageBMP &image) {
+ImageBmp Pixelization::Apply(const ImageBmp &image) {
     std::vector<std::vector<Pixel<uint8_t>>> new_data(image.GetHeight());
 
     for (size_t i = 0; i < image.GetHeight(); i += window_size_) {
         std::vector<Pixel<uint8_t>> row(image.GetWidth());
         for (size_t j = 0; j < image.GetWidth(); j += window_size_) {
-            std::fill(row.begin() + j, row.begin() + std::min(j + window_size_, image.GetWidth()),
+            std::fill(std::next(row.begin(), static_cast<std::ptrdiff_t>(j)),
+                      std::next(row.begin(), static_cast<std::ptrdiff_t>(std::min(j + window_size_, image.GetWidth()))),
                       GetPixel(image, i, j));
         }
         // new_data[i] = std::move(row);
-        std::fill(new_data.begin() + i, new_data.begin() + std::min(i + window_size_, image.GetHeight()),
-                  std::move(row));
+        std::fill(
+            std::next(new_data.begin(), static_cast<std::ptrdiff_t>(i)),
+            std::next(new_data.begin(), static_cast<std::ptrdiff_t>(std::min(i + window_size_, image.GetHeight()))),
+            std::move(row));
     }
-    return {new_data};
+    return ImageBmp{new_data};
 }
 
-Pixel<uint8_t> Pixelization::GetPixel(const ImageBMP &image, size_t y, size_t x) const {
+Pixel<uint8_t> Pixelization::GetPixel(const ImageBmp &image, size_t y, size_t x) const {
     std::vector<const Pixel<uint8_t> *> pixel_candidates;
     pixel_candidates.reserve(window_size_ * window_size_);
     for (size_t i = std::clamp(static_cast<int64_t>(y) - static_cast<int64_t>(window_size_) / 2,
@@ -149,7 +153,7 @@ Pixel<uint8_t> Pixelization::GetPixel(const ImageBMP &image, size_t y, size_t x)
     }
 
     // find median pixel by every color
-    auto median_it = pixel_candidates.begin() + pixel_candidates.size() / 2;
+    auto median_it = std::next(pixel_candidates.begin(), static_cast<std::ptrdiff_t>(pixel_candidates.size() / 2));
     // red
     std::nth_element(pixel_candidates.begin(), median_it, pixel_candidates.end(),
                      [](auto lhs, auto rhs) { return lhs->GetRed() < rhs->GetRed(); });
@@ -170,7 +174,7 @@ Posterization::Posterization(uint8_t levels) : colors_quantization_(bmp24::utils
     levels_ = levels;
 }
 
-void Posterization::MakeColorsQuantization(const ImageBMP &image) {
+void Posterization::MakeColorsQuantization(const ImageBmp &image) {
     size_t amount_of_pixels = image.GetHeight() * image.GetWidth();
 
     std::vector<const Pixel<uint8_t> *> image_pixels;
@@ -186,14 +190,15 @@ void Posterization::MakeColorsQuantization(const ImageBMP &image) {
         &Pixel<uint8_t>::GetGreen,
         &Pixel<uint8_t>::GetRed,
     };
-    size_t curr_color_percentile;
+    size_t curr_color_percentile = 0;
 
     for (size_t i = 0; i < bmp24::utils::COLOR_CHANNELS_AMOUNT; i++) {
         for (size_t level_num = 0; level_num < levels_; level_num++) {
             curr_color_percentile =
                 std::clamp(amount_of_pixels / levels_ * (level_num + 1), static_cast<size_t>(0), amount_of_pixels - 1);
             std::nth_element(
-                image_pixels.begin(), image_pixels.begin() + curr_color_percentile, image_pixels.end(),
+                image_pixels.begin(),
+                std::next(image_pixels.begin(), static_cast<std::ptrdiff_t>(curr_color_percentile)), image_pixels.end(),
                 [&](auto lhs, auto rhs) { return (lhs->*colors_getters[i])() < (rhs->*colors_getters[i])(); });
             colors_quantization_[i].push_back((image_pixels[curr_color_percentile]->*colors_getters[i])());
         };
@@ -211,13 +216,13 @@ uint8_t Posterization::QuantizeColor(uint8_t channel_color, size_t color_num) co
     return *lower;
 }
 
-Pixel<uint8_t> Posterization::GetPixel(const ImageBMP &image, size_t y, size_t x) const {
+Pixel<uint8_t> Posterization::GetPixel(const ImageBmp &image, size_t y, size_t x) const {
     const Pixel<uint8_t> &tmp_pixel = image.GetImagePixel(y, x);
     return {QuantizeColor(tmp_pixel.GetBlue(), 0), QuantizeColor(tmp_pixel.GetGreen(), 1),
             QuantizeColor(tmp_pixel.GetRed(), 2)};
 }
 
-ImageBMP Posterization::Apply(const ImageBMP &image) {
+ImageBmp Posterization::Apply(const ImageBmp &image) {
     MakeColorsQuantization(image);
 
     // return GaussianBlur(0.5).Apply(PixelwiseFilter::Apply(image));
@@ -233,8 +238,8 @@ std::unique_ptr<Filter> CreateFilter(const parser::Token &token) {
                                         "\"");
         }
 
-        size_t width_crop;
-        size_t height_crop;
+        size_t width_crop = 0;
+        size_t height_crop = 0;
         try {
             width_crop = std::stoi(token.args.at(0));
             height_crop = std::stoi(token.args.at(1));
@@ -274,7 +279,7 @@ std::unique_ptr<Filter> CreateFilter(const parser::Token &token) {
                                         "\"");
         }
 
-        double threshold;
+        double threshold = 0;
         try {
             threshold = std::stod(token.args.at(0));
         } catch (const std::invalid_argument &) {
@@ -292,7 +297,7 @@ std::unique_ptr<Filter> CreateFilter(const parser::Token &token) {
                                         "\"");
         }
 
-        double sigma;
+        double sigma = 0;
         try {
             sigma = std::stod(token.args.at(0));
         } catch (const std::invalid_argument &) {
@@ -310,7 +315,7 @@ std::unique_ptr<Filter> CreateFilter(const parser::Token &token) {
                                         "\"");
         }
 
-        size_t window_size;
+        size_t window_size = 0;
         try {
             window_size = std::stoi(token.args.at(0));
         } catch (const std::invalid_argument &) {
@@ -328,7 +333,7 @@ std::unique_ptr<Filter> CreateFilter(const parser::Token &token) {
                                         "\"");
         }
 
-        size_t levels;
+        size_t levels = 0;
         try {
             levels = std::stoi(token.args.at(0));
         } catch (const std::invalid_argument &) {

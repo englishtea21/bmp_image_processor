@@ -15,17 +15,14 @@ namespace filters {
 class Filter {
 public:
     Filter() = default;
-    virtual ~Filter() {
-    }
-    virtual ImageBMP Apply(const ImageBMP &image) = 0;
+    virtual ~Filter() = default;
+    virtual ImageBmp Apply(const ImageBmp &image) = 0;
 };
 
 class PixelwiseFilter : public Filter {
 public:
     PixelwiseFilter() = default;
-    virtual ~PixelwiseFilter() {
-    }
-    virtual ImageBMP Apply(const ImageBMP &image) override {
+    ImageBmp Apply(const ImageBmp &image) override {
         std::vector<std::vector<Pixel<uint8_t>>> new_data(image.GetHeight());
 
         for (size_t i = 0; i < image.GetHeight(); ++i) {
@@ -35,21 +32,26 @@ public:
             }
             new_data[i] = std::move(row);
         }
-        return {new_data};
+        return ImageBmp{new_data};
     }
 
+protected:
+    virtual ~PixelwiseFilter() = default;
+
 private:
-    virtual Pixel<uint8_t> GetPixel(const ImageBMP &image, size_t y, size_t x) const = 0;
+    virtual Pixel<uint8_t> GetPixel(const ImageBmp &image, size_t y, size_t x) const = 0;
 };
 
 template <typename ComputationType>
 class ConvolutionalFilter : public Filter {
+
 protected:
     std::vector<std::vector<ComputationType>> conv_matrix_;
 
     ConvolutionalFilter() {
     }
-    ConvolutionalFilter(std::vector<std::vector<ComputationType>> conv_matrix) {
+    virtual ~ConvolutionalFilter() = default;
+    explicit ConvolutionalFilter(std::vector<std::vector<ComputationType>> conv_matrix) {
         conv_matrix_ = conv_matrix;
     }
 
@@ -82,7 +84,7 @@ protected:
     }
 
 public:
-    virtual ImageBMP Apply(const ImageBMP &image) override {
+    ImageBmp Apply(const ImageBmp &image) override {
         std::vector<std::vector<Pixel<uint8_t>>> new_data(image.GetHeight());
 
         for (size_t i = 0; i < image.GetHeight(); ++i) {
@@ -99,7 +101,7 @@ public:
 class Crop : public Filter {
 public:
     Crop(size_t crop_width, size_t crop_height);
-    ImageBMP Apply(const ImageBMP &image) override;
+    ImageBmp Apply(const ImageBmp &image) override;
 
 private:
     size_t crop_width_;
@@ -108,26 +110,27 @@ private:
 
 class Grayscale : public PixelwiseFilter {
 public:
-    // ImageBMP Apply(const ImageBMP &image) const override;
-    virtual Pixel<uint8_t> GetPixel(const ImageBMP &image, size_t y, size_t x) const override;
+    // ImageBmp Apply(const ImageBmp &image) const override;
+    Grayscale() = default;
+    Pixel<uint8_t> GetPixel(const ImageBmp &image, size_t y, size_t x) const override;
 };
 
 class Negative : public PixelwiseFilter {
 public:
-    // ImageBMP Apply(const ImageBMP &image) const override;
-    virtual Pixel<uint8_t> GetPixel(const ImageBMP &image, size_t y, size_t x) const override;
+    // ImageBmp Apply(const ImageBmp &image) const override;
+    Pixel<uint8_t> GetPixel(const ImageBmp &image, size_t y, size_t x) const override;
 };
 
 class Sharpening : public ConvolutionalFilter<double> {
 public:
-    // ImageBMP Apply(const ImageBMP &image) const override;
+    // ImageBmp Apply(const ImageBmp &image) const override;
     Sharpening();
 };
 
 class EdgeDetection : public ConvolutionalFilter<double> {
 public:
-    EdgeDetection(double threshold);
-    ImageBMP Apply(const ImageBMP &image) override;
+    explicit EdgeDetection(double threshold);
+    ImageBmp Apply(const ImageBmp &image) override;
 
 private:
     double threshold_;
@@ -135,8 +138,8 @@ private:
 
 class GaussianBlur : public ConvolutionalFilter<double> {
 public:
-    GaussianBlur(double sigma);
-    ImageBMP Apply(const ImageBMP &image) override;
+    explicit GaussianBlur(double sigma);
+    ImageBmp Apply(const ImageBmp &image) override;
 
 private:
     size_t kernel_optimal_size_;
@@ -150,9 +153,9 @@ private:
 // Based on averaging the pixels variation using median among pixels set
 class Pixelization : public PixelwiseFilter {
 public:
-    Pixelization(size_t window_size_);
-    ImageBMP Apply(const ImageBMP &image) override;
-    Pixel<uint8_t> GetPixel(const ImageBMP &image, size_t y, size_t x) const override;
+    explicit Pixelization(size_t window_size);
+    ImageBmp Apply(const ImageBmp &image) override;
+    Pixel<uint8_t> GetPixel(const ImageBmp &image, size_t y, size_t x) const override;
 
 private:
     size_t window_size_;
@@ -161,12 +164,12 @@ private:
 // Based on color quantization by percentiles
 class Posterization : public PixelwiseFilter {
 public:
-    Posterization(uint8_t levels);
-    Pixel<uint8_t> GetPixel(const ImageBMP &image, size_t y, size_t x) const override;
-    ImageBMP Apply(const ImageBMP &image) override;
+    explicit Posterization(uint8_t levels);
+    Pixel<uint8_t> GetPixel(const ImageBmp &image, size_t y, size_t x) const override;
+    ImageBmp Apply(const ImageBmp &image) override;
 
 private:
-    void MakeColorsQuantization(const ImageBMP &image);
+    void MakeColorsQuantization(const ImageBmp &image);
     uint8_t QuantizeColor(uint8_t channel_color, size_t color_num) const;
 
     uint8_t levels_;

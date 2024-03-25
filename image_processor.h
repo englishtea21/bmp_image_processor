@@ -10,8 +10,8 @@
 #include "filters/filter.h"
 
 std::vector<parser::Token> GetTokens(int argc, char *argv[]);
-ImageBMP GetImage(const std::string &path);
-void WriteImage(const ImageBMP &image_bmp, const std::string &path);
-void ApplyFilters(ImageBMP &image, const std::vector<parser::Token> &tokens);
+ImageBmp GetImage(const std::string &path);
+void WriteImage(const ImageBmp &image_bmp, const std::string &path);
+void ApplyFilters(ImageBmp &image, const std::vector<parser::Token> &tokens);
 
 #endif  // IMAGE_PROCESSOR_H

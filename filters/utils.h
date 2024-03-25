@@ -3,7 +3,12 @@
 
 #include <stddef.h>
 #include <vector>
+#include <string>
 #include "../image/pixel.h"
+
+namespace filters::utils::gaussian_blur {
+const size_t ENOUGH_KERNEL_SIZE_IN_SIGMAS = 6;
+}  // namespace filters::utils::gaussian_blur
 
 namespace filters::utils::matrices {
 const std::vector<double> GRAYSCALE_COLOR_RATIO = {0.114, 0.587, 0.299};

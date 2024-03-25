@@ -8,13 +8,13 @@
 #include <stdexcept>
 #include "pixel.h"
 
-class ImageBMP {
+class ImageBmp {
 public:
-    ImageBMP() = default;
-    ImageBMP(size_t width, size_t height);
-    ImageBMP(const std::vector<std::vector<Pixel<uint8_t>>> &image_pixels);
-    ImageBMP(const ImageBMP &other);
-    ~ImageBMP() = default;
+    ImageBmp() = default;
+    ImageBmp(size_t width, size_t height);
+    explicit ImageBmp(const std::vector<std::vector<Pixel<uint8_t>>> &image_pixels);
+    ImageBmp(const ImageBmp &other);
+    ~ImageBmp() = default;
 
     size_t GetWidth() const;
     size_t GetHeight() const;

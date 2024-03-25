@@ -1,10 +1,10 @@
 #include "bmp24_reader.h"
 
-input_output::ReaderBMP24::ReaderBMP24(const std::string &filename) {
+input_output::ReaderBmp24::ReaderBmp24(const std::string &filename) {
     path_ = filename;
 }
 
-ImageBMP input_output::ReaderBMP24::Read() {
+ImageBmp input_output::ReaderBmp24::Read() {
     unsigned char bmp24_header_bytes[bmp24::utils::HEADER_SIZE];
     unsigned char bmp24_dib_header_bytes[bmp24::utils::DIB_HEADER_SIZE];
 
@@ -18,10 +18,10 @@ ImageBMP input_output::ReaderBMP24::Read() {
     }
     img_file.read(reinterpret_cast<char *>(bmp24_header_bytes), bmp24::utils::HEADER_SIZE);
     // implicit header checking
-    bmp24::BMP24Header bmp_header(std::move(bmp24_header_bytes), path_);
+    bmp24::Bmp24Header bmp_header(std::move(bmp24_header_bytes), path_);
     try {
         img_file.read(reinterpret_cast<char *>(bmp24_dib_header_bytes), bmp24::utils::DIB_HEADER_SIZE);
-        bmp24::BMP24DIB_Header bmp24_dib_header(std::move(bmp24_dib_header_bytes));
+        bmp24::Bmp24DibHeader bmp24_dib_header(std::move(bmp24_dib_header_bytes));
 
         size_t image_width = bmp24_dib_header.GetWidth();
         size_t image_height = bmp24_dib_header.GetHeight();

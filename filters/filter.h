@@ -15,12 +15,14 @@ namespace filters {
 class Filter {
 public:
     Filter() = default;
+    ~Filter() = default;
     virtual ImageBMP Apply(const ImageBMP &image) = 0;
 };
 
 class PixelwiseFilter : public Filter {
 public:
     PixelwiseFilter() = default;
+    ~PixelwiseFilter() = default;
     virtual ImageBMP Apply(const ImageBMP &image) override {
         std::vector<std::vector<Pixel<uint8_t>>> new_data(image.GetHeight());
 

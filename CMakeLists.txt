@@ -1,10 +1,10 @@
 set (CMAKE_CXX_STANDARD 20)
 
 cmake_minimum_required(VERSION 3.4)
-project(image_processor.out)
+project(image_processor)
 
 add_executable(
-    image_processor.out
+    image_processor
     image_processor.cpp
 )
 add_subdirectory(filters)
@@ -22,4 +22,4 @@ add_subdirectory(parser)
 
 
 # dependencies
-target_link_libraries(image_processor.out filters image input_output parser)
+target_link_libraries(image_processor filters image input_output parser)

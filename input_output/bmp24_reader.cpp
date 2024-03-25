@@ -39,7 +39,7 @@ ImageBmp input_output::ReaderBmp24::Read() {
                                 static_cast<uint8_t>(pix[2]));
             }
             data[i] = row;
-            img_file.ignore(padding_size);
+            img_file.ignore(static_cast<std::streamsize>(padding_size));
         }
         img_file.close();
 

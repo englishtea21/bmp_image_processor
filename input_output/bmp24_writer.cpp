@@ -47,7 +47,7 @@ void WriterBmp24::Write(const ImageBmp &image_bmp) {
                              image_bmp.GetImagePixel(i, j).GetRed()};
             img_file.write(reinterpret_cast<char *>(pix), bmp24::utils::BYTES_PER_PIXEL);
         }
-        img_file.write(reinterpret_cast<char *>(empty_pix), padding_size);
+        img_file.write(reinterpret_cast<char *>(empty_pix), static_cast<std::streamsize>(padding_size));
     }
     img_file.close();
 }

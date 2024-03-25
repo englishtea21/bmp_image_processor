@@ -36,7 +36,7 @@ public:
     }
 
 protected:
-    ~PixelwiseFilter() = default;
+    ~PixelwiseFilter() override = default;
 
 private:
     virtual Pixel<uint8_t> GetPixel(const ImageBmp &image, size_t y, size_t x) const = 0;
@@ -50,7 +50,7 @@ protected:
 
     ConvolutionalFilter() {
     }
-    ~ConvolutionalFilter() = default;
+    ~ConvolutionalFilter() override = default;
     explicit ConvolutionalFilter(std::vector<std::vector<ComputationType>> conv_matrix) {
         conv_matrix_ = conv_matrix;
     }

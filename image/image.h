@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <vector>
 
+#include <stdexcept>
 #include "pixel.h"
 
 class ImageBMP

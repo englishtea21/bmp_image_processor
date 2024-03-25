@@ -7,19 +7,17 @@
 #include "../image/image.h"
 #include "bmp24.h"
 
-namespace input_output
-{
+namespace input_output {
 
-    class ReaderBMP24
-    {
-    public:
-        ReaderBMP24(const std::string &filename);
+class ReaderBMP24 {
+public:
+    ReaderBMP24(const std::string &filename);
 
-        ImageBMP Read();
+    ImageBMP Read();
 
-    private:
-        std::string path_;
-    };
-} // namespace input_output
+private:
+    std::string path_;
+};
+}  // namespace input_output
 
-#endif // BMP24_READER_H
+#endif  // BMP24_READER_H

@@ -8,8 +8,7 @@
 #include <stdexcept>
 #include "pixel.h"
 
-class ImageBMP
-{
+class ImageBMP {
 public:
     ImageBMP() = default;
     ImageBMP(size_t width, size_t height);
@@ -34,4 +33,4 @@ private:
     void CheckCoordsBoundings(size_t x, size_t y) const;
 };
 
-#endif // IMAGE_H
+#endif  // IMAGE_H

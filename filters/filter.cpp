@@ -15,7 +15,7 @@ ImageBMP Crop::Apply(const ImageBMP &image) {
     for (size_t i = 0; i < actual_crop_height; ++i) {
         std::vector<Pixel<uint8_t>> row(actual_crop_width);
         for (size_t j = 0; j < actual_crop_width; ++j) {
-            row[j] = std::move(image.GetImagePixel(i + image.GetHeight() - actual_crop_height, j));
+            row[j] = image.GetImagePixel(i + image.GetHeight() - actual_crop_height, j);
         }
         new_data[i] = std::move(row);
     }
@@ -23,7 +23,7 @@ ImageBMP Crop::Apply(const ImageBMP &image) {
 }
 
 Pixel<uint8_t> Grayscale::GetPixel(const ImageBMP &image, size_t y, size_t x) const {
-    Pixel<double> tmp_pixel(std::move(image.GetImagePixel(y, x)));
+    Pixel<double> tmp_pixel(image.GetImagePixel(y, x));
 
     tmp_pixel.SetPixel(filters::utils::matrices::GRAYSCALE_COLOR_RATIO[0] * static_cast<double>(tmp_pixel.GetBlue()) +
                        filters::utils::matrices::GRAYSCALE_COLOR_RATIO[1] * static_cast<double>(tmp_pixel.GetGreen()) +
@@ -48,9 +48,9 @@ EdgeDetection::EdgeDetection(double threshold) : ConvolutionalFilter(filters::ut
 
 ImageBMP EdgeDetection::Apply(const ImageBMP &image) {
     Grayscale grayscaler;
-    ImageBMP image_tmp = std::move(grayscaler.Apply(image));
+    ImageBMP image_tmp = grayscaler.Apply(image);
 
-    image_tmp = std::move(ConvolutionalFilter::Apply(std::move(image_tmp)));
+    image_tmp = ConvolutionalFilter::Apply(std::move(image_tmp));
 
     for (size_t i = 0; i < image_tmp.GetHeight(); ++i) {
         for (size_t j = 0; j < image_tmp.GetWidth(); ++j) {
@@ -69,7 +69,7 @@ GaussianBlur::GaussianBlur(double sigma) {
     this->sigma_square_ = sigma * sigma;
     this->gaussian_denominator_ = 2 * std::numbers::pi * this->sigma_square_;
 
-    conv_matrix_ = std::move(Generate1DGaussianKernel());
+    conv_matrix_ = Generate1DGaussianKernel();
 }
 
 ImageBMP GaussianBlur::Apply(const ImageBMP &image) {
@@ -130,7 +130,7 @@ ImageBMP Pixelization::Apply(const ImageBMP &image) {
         std::vector<Pixel<uint8_t>> row(image.GetWidth());
         for (size_t j = 0; j < image.GetWidth(); j += window_size_) {
             std::fill(row.begin() + j, row.begin() + std::min(j + window_size_, image.GetWidth()),
-                      std::move(GetPixel(image, i, j)));
+                      GetPixel(image, i, j));
         }
         // new_data[i] = std::move(row);
         std::fill(new_data.begin() + i, new_data.begin() + std::min(i + window_size_, image.GetHeight()),

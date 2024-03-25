@@ -1,45 +1,35 @@
 #include "image_processor.h"
 
-int main(int argc, char *argv[])
-{
-    try
-    {
+int main(int argc, char *argv[]) {
+    try {
         std::vector<parser::Token> tokens = GetTokens(argc, argv);
         ImageBMP image_bmp = GetImage(tokens[0].name);
         ApplyFilters(image_bmp, tokens);
         WriteImage(image_bmp, tokens[1].name);
-    }
-    catch (const std::exception &e)
-    {
+    } catch (const std::exception &e) {
         std::cerr << e.what() << std::endl;
     }
     return 0;
 }
 
-std::vector<parser::Token> GetTokens(int argc, char *argv[])
-{
+std::vector<parser::Token> GetTokens(int argc, char *argv[]) {
     std::vector<parser::Token> tokens = parser::Parse(argc, argv);
-    if (tokens.size() < 2)
-    {
+    if (tokens.size() < 2) {
         throw std::invalid_argument("More arguments expected");
     }
     return tokens;
 }
-ImageBMP GetImage(const std::string &path)
-{
+ImageBMP GetImage(const std::string &path) {
     input_output::ReaderBMP24 reader(path);
     ImageBMP image_bmp = reader.Read();
     return image_bmp;
 }
-void WriteImage(const ImageBMP &image_bmp, const std::string &path)
-{
+void WriteImage(const ImageBMP &image_bmp, const std::string &path) {
     input_output::WriterBMP24 writer(path);
     writer.Write(image_bmp);
 }
-void ApplyFilters(ImageBMP &image, const std::vector<parser::Token> &tokens)
-{
-    for (size_t i = 2; i < tokens.size(); i++)
-    {
+void ApplyFilters(ImageBMP &image, const std::vector<parser::Token> &tokens) {
+    for (size_t i = 2; i < tokens.size(); i++) {
         image = filters::CreateFilter(tokens[i])->Apply(image);
     }
 }

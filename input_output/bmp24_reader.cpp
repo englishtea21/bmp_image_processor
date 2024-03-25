@@ -29,7 +29,7 @@ ImageBmp input_output::ReaderBmp24::Read() {
         std::vector<std::vector<Pixel<uint8_t>>> data(image_height);
         std::vector<Pixel<uint8_t>> row(image_width);
 
-        const int padding_size = bmp24::GetPaddingSize(image_width);
+        const size_t padding_size = bmp24::GetPaddingSize(image_width);
 
         for (size_t i = 0; i < image_height; ++i) {
             for (size_t j = 0; j < image_width; ++j) {

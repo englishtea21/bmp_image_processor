@@ -6,6 +6,9 @@
 #include <string>
 
 namespace bmp24::utils {
+// Bytes proceeding
+const uint8_t BYTE_MASK = 0xff;
+
 // BMP general
 const std::vector<size_t> SHIFT_BITS{8, 16, 24};
 const size_t PADDING_SIZE = 4;

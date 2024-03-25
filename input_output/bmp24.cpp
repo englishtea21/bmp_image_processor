@@ -7,7 +7,7 @@ void NumToBytes(T num, unsigned char *bytes) {
     // записываем в младший разряд (самый правый)
     *bytes = num;
     for (size_t i = 0; i < bmp24::utils::SHIFT_BITS.size(); ++i) {
-        *(bytes + i + 1) = (num >> bmp24::utils::SHIFT_BITS[i]) & 0xff;
+        *(bytes + i + 1) = (num >> bmp24::utils::SHIFT_BITS[i]) & bmp24::utils::BYTE_MASK;
     }
 }
 

@@ -180,22 +180,26 @@ void Posterization::MakeColorsQuantization(const ImageBMP &image) {
         }
     }
 
+    size_t curr_color_percentile;
+
     // Blue percentiles
     colors_quantization_[0].reserve(levels_);
     for (size_t level_num = 0; level_num < levels_; level_num++) {
+        curr_color_percentile = amount_of_pixels / levels_ * level_num;
         std::nth_element(image_pixels.begin(), image_pixels.begin() + (amount_of_pixels / levels_ * level_num),
                          image_pixels.end(), [](auto lhs, auto rhs) { return lhs->GetBlue() < rhs->GetBlue(); });
+        colors_quantization_[0].push_back(image_pixels[])
     }
 
     // Green percentiles
-    colors_quantization_[0].reserve(levels_);
+    colors_quantization_[1].reserve(levels_);
     for (size_t level_num = 0; level_num < levels_; level_num++) {
         std::nth_element(image_pixels.begin(), image_pixels.begin() + (amount_of_pixels / levels_ * level_num),
                          image_pixels.end(), [](auto lhs, auto rhs) { return lhs->GetGreen() < rhs->GetGreen(); });
     }
 
     // Red percentiles
-    colors_quantization_[0].reserve(levels_);
+    colors_quantization_[2].reserve(levels_);
     for (size_t level_num = 0; level_num < levels_; level_num++) {
         std::nth_element(image_pixels.begin(), image_pixels.begin() + (amount_of_pixels / levels_ * level_num),
                          image_pixels.end(), [](auto lhs, auto rhs) { return lhs->GetRed() < rhs->GetRed(); });
@@ -220,41 +224,7 @@ Pixel<uint8_t> Posterization::GetPixel(const ImageBMP &image, size_t y, size_t x
 }
 
 ImageBMP Posterization::Apply(const ImageBMP &image) {
-    // min and max color channels values in BGR format
-    std::vector<uint8_t> min_colors(3, filters::utils::pixels::WHITE.GetRed());
-    std::vector<uint8_t> max_colors(3, filters::utils::pixels::BLACK.GetRed());
-
-    for (size_t i = 0; i < image.GetHeight(); i++) {
-        // min color
-        min_colors[0] = std::min(std::min_element(image.GetImagePixels()[i].begin(), image.GetImagePixels()[i].end(),
-                                                  [](auto lhs, auto rhs) { return lhs.GetBlue() < rhs.GetBlue(); })
-                                     ->GetBlue(),
-                                 min_colors[0]);
-        min_colors[1] = std::min(std::min_element(image.GetImagePixels()[i].begin(), image.GetImagePixels()[i].end(),
-                                                  [](auto lhs, auto rhs) { return lhs.GetGreen() < rhs.GetGreen(); })
-                                     ->GetGreen(),
-                                 min_colors[1]);
-        min_colors[2] = std::min(std::min_element(image.GetImagePixels()[i].begin(), image.GetImagePixels()[i].end(),
-                                                  [](auto lhs, auto rhs) { return lhs.GetRed() < rhs.GetRed(); })
-                                     ->GetRed(),
-                                 min_colors[2]);
-
-        // max colors
-        max_colors[0] = std::max(std::max_element(image.GetImagePixels()[i].begin(), image.GetImagePixels()[i].end(),
-                                                  [](auto lhs, auto rhs) { return lhs.GetBlue() < rhs.GetBlue(); })
-                                     ->GetBlue(),
-                                 min_colors[0]);
-        max_colors[1] = std::max(std::max_element(image.GetImagePixels()[i].begin(), image.GetImagePixels()[i].end(),
-                                                  [](auto lhs, auto rhs) { return lhs.GetGreen() < rhs.GetGreen(); })
-                                     ->GetGreen(),
-                                 min_colors[1]);
-        max_colors[2] = std::max(std::max_element(image.GetImagePixels()[i].begin(), image.GetImagePixels()[i].end(),
-                                                  [](auto lhs, auto rhs) { return lhs.GetRed() < rhs.GetRed(); })
-                                     ->GetRed(),
-                                 min_colors[0]);
-    }
-
-    MakeColorsQuantization(min_colors, max_colors);
+    MakeColorsQuantization(image);
 
     ImageBMP tmp_image = PixelwiseFilter::Apply(image);
 

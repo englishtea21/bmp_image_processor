@@ -6,6 +6,7 @@
 #include <memory>
 #include <numbers>
 #include "utils.h"
+#include "../input_output/utils.h"
 #include "../image/image.h"
 #include "../parser/parser.h"
 
@@ -188,7 +189,7 @@ namespace filters
         ImageBMP Apply(const ImageBMP &image) override;
 
     private:
-        void MakeColorsQuantization(const std::vector<uint8_t> &min_colors, const std::vector<uint8_t> &max_colors);
+        void MakeColorsQuantization(const ImageBMP &image);
         uint8_t QuantizeColor(uint8_t channel_color, size_t color_num) const;
 
         uint8_t levels_;

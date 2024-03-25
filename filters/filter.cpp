@@ -130,10 +130,11 @@ ImageBMP Pixelization::Apply(const ImageBMP &image) {
         std::vector<Pixel<uint8_t>> row(image.GetWidth());
         for (size_t j = 0; j < image.GetWidth(); j += window_size_) {
             std::fill(row.begin() + j, row.begin() + std::min(j + window_size_, image.GetWidth()),
-                      GetPixel(image, i, j));
+                      std::move(GetPixel(image, i, j)));
         }
         // new_data[i] = std::move(row);
-        std::fill(new_data.begin() + i, new_data.begin() + std::min(i + window_size_, image.GetHeight()), row);
+        std::fill(new_data.begin() + i, new_data.begin() + std::min(i + window_size_, image.GetHeight()),
+                  std::move(row));
     }
     return {new_data};
 }

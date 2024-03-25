@@ -94,7 +94,7 @@ public:
             }
             new_data[i] = std::move(row);
         }
-        return {new_data};
+        return ImageBmp{new_data};
     }
 };
 

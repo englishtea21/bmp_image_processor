@@ -43,7 +43,7 @@ ImageBmp input_output::ReaderBmp24::Read() {
         }
         img_file.close();
 
-        return {data};
+        return ImageBmp{data};
     } catch (std::exception &e) {
         throw std::invalid_argument(bmp24::utils::exceptions::FILE_READING_ERROR + path_ + "\n" +
                                     static_cast<std::string>(e.what()));

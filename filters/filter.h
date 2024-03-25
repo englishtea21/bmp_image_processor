@@ -6,6 +6,7 @@
 #include <memory>
 #include <numbers>
 #include "utils.h"
+#include "../input_output/utils.h"
 #include "../image/image.h"
 #include "../parser/parser.h"
 

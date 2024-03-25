@@ -165,7 +165,7 @@ Pixel<uint8_t> Pixelization::GetPixel(const ImageBMP &image, size_t y, size_t x)
     return {median_blue, median_green, median_red};
 }
 
-Posterization::Posterization(uint8_t levels) : colors_quantization_(3) {
+Posterization::Posterization(uint8_t levels) : colors_quantization_(bmp24::utils::COLOR_CHANNELS_AMOUNT) {
     levels_ = levels;
 }
 
@@ -180,35 +180,28 @@ void Posterization::MakeColorsQuantization(const ImageBMP &image) {
         }
     }
 
+    std::vector<uint8_t (Pixel<uint8_t>::*)() const> colors_getters{
+        &Pixel<uint8_t>::GetBlue,
+        &Pixel<uint8_t>::GetGreen,
+        &Pixel<uint8_t>::GetRed,
+    };
     size_t curr_color_percentile;
 
-    // Blue percentiles
-    colors_quantization_[0].reserve(levels_);
-    for (size_t level_num = 0; level_num < levels_; level_num++) {
-        curr_color_percentile = amount_of_pixels / levels_ * level_num;
-        std::nth_element(image_pixels.begin(), image_pixels.begin() + (amount_of_pixels / levels_ * level_num),
-                         image_pixels.end(), [](auto lhs, auto rhs) { return lhs->GetBlue() < rhs->GetBlue(); });
-        colors_quantization_[0].push_back(image_pixels[])
-    }
-
-    // Green percentiles
-    colors_quantization_[1].reserve(levels_);
-    for (size_t level_num = 0; level_num < levels_; level_num++) {
-        std::nth_element(image_pixels.begin(), image_pixels.begin() + (amount_of_pixels / levels_ * level_num),
-                         image_pixels.end(), [](auto lhs, auto rhs) { return lhs->GetGreen() < rhs->GetGreen(); });
-    }
-
-    // Red percentiles
-    colors_quantization_[2].reserve(levels_);
-    for (size_t level_num = 0; level_num < levels_; level_num++) {
-        std::nth_element(image_pixels.begin(), image_pixels.begin() + (amount_of_pixels / levels_ * level_num),
-                         image_pixels.end(), [](auto lhs, auto rhs) { return lhs->GetRed() < rhs->GetRed(); });
+    for (size_t i = 0; i < bmp24::utils::COLOR_CHANNELS_AMOUNT; i++) {
+        for (size_t level_num = 0; level_num < levels_; level_num++) {
+            curr_color_percentile =
+                std::clamp(amount_of_pixels / levels_ * (level_num + 1), static_cast<size_t>(0), amount_of_pixels - 1);
+            std::nth_element(
+                image_pixels.begin(), image_pixels.begin() + curr_color_percentile, image_pixels.end(),
+                [&](auto lhs, auto rhs) { return (lhs->*colors_getters[i])() < (rhs->*colors_getters[i])(); });
+            colors_quantization_[i].push_back((image_pixels[curr_color_percentile]->*colors_getters[i])());
+        };
     }
 }
 
 uint8_t Posterization::QuantizeColor(uint8_t channel_color, size_t color_num) const {
     auto lower =
-        std::lower_bound(colors_quantization_[color_num].begin(), colors_quantization_[color_num].end(), channel_color);
+        std::upper_bound(colors_quantization_[color_num].begin(), colors_quantization_[color_num].end(), channel_color);
 
     if (lower == colors_quantization_[color_num].end()) {
         return colors_quantization_[color_num][levels_ - 1];
@@ -226,11 +219,8 @@ Pixel<uint8_t> Posterization::GetPixel(const ImageBMP &image, size_t y, size_t x
 ImageBMP Posterization::Apply(const ImageBMP &image) {
     MakeColorsQuantization(image);
 
-    ImageBMP tmp_image = PixelwiseFilter::Apply(image);
-
-    GaussianBlur blur(1);
-
-    return blur.Apply(tmp_image);
+    // return GaussianBlur(0.5).Apply(PixelwiseFilter::Apply(image));
+    return PixelwiseFilter::Apply(image);
 }
 
 std::unique_ptr<Filter> CreateFilter(const parser::Token &token) {

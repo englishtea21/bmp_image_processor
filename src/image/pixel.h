@@ -3,12 +3,14 @@
 
 #include <algorithm>
 #include <cstdint>
+#include "../input_output/utils.h"
 
 // Declaration
 template <typename T>
 class Pixel {
-    static_assert((std::is_same<double, T>() || std::is_same<int64_t, T>() || std::is_same<uint8_t, T>()),
-                  "Only double, int64_t, uint8_T types allowed!");
+    static_assert((std::is_same<double, T>() || std::is_same<long double, T>() || std::is_same<int64_t, T>() ||
+                   std::is_same<uint8_t, T>()),
+                  "Only double, long double, int64_t, uint8_T types allowed!");
 
 public:
     Pixel();
@@ -28,7 +30,8 @@ public:
     T GetGreen() const;
     T GetRed() const;
 
-    Pixel<uint8_t> NormalizePixel(const uint8_t max_color = 255) const;
+    template <typename U>
+    static Pixel<U> NormalizePixel(const Pixel<T> &pixel);
 
     template <typename U>
     Pixel<U> MultiplyPixelBy(U mult) const;
@@ -121,16 +124,14 @@ auto Pixel<T>::GetRed() const -> T {
 }
 
 template <typename T>
-Pixel<uint8_t> Pixel<T>::NormalizePixel(const uint8_t max_color) const {
-    Pixel<uint8_t> normalized_pixel{
-        static_cast<uint8_t>(
-            std::clamp(static_cast<int64_t>(blue_), static_cast<int64_t>(0), static_cast<int64_t>(max_color))),
-        static_cast<uint8_t>(
-            std::clamp(static_cast<int64_t>(green_), static_cast<int64_t>(0), static_cast<int64_t>(max_color))),
-        static_cast<uint8_t>(
-            std::clamp(static_cast<int64_t>(red_), static_cast<int64_t>(0), static_cast<int64_t>(max_color)))};
-
-    return normalized_pixel;
+template <typename U>
+Pixel<U> Pixel<T>::NormalizePixel(const Pixel<T> &pixel) {
+    return Pixel<U>{std::clamp(static_cast<U>(pixel.blue_), static_cast<U>(0),
+                               static_cast<U>(bmp24::utils::COLOR_CHANNEL_MAX_VALUE)),
+                    std::clamp(static_cast<U>(pixel.green_), static_cast<U>(0),
+                               static_cast<U>(bmp24::utils::COLOR_CHANNEL_MAX_VALUE)),
+                    std::clamp(static_cast<U>(pixel.red_), static_cast<U>(0),
+                               static_cast<U>(bmp24::utils::COLOR_CHANNEL_MAX_VALUE))};
 }
 
 template <typename T>

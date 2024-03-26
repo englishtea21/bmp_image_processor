@@ -14,6 +14,7 @@ const std::vector<size_t> SHIFT_BITS{8, 16, 24};
 const size_t PADDING_SIZE = 4;
 const size_t BITS_PER_PIXEL = 24;
 const size_t BYTES_PER_PIXEL = 3;
+const size_t COLOR_CHANNEL_MAX_VALUE = 255;
 const size_t COLOR_CHANNELS_AMOUNT = 3;
 
 // BMP header data

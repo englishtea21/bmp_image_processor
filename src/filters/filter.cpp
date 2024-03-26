@@ -55,12 +55,15 @@ ImageBmp EdgeDetection::Apply(const ImageBmp &image) {
 
     for (size_t i = 0; i < image_tmp.GetHeight(); ++i) {
         for (size_t j = 0; j < image_tmp.GetWidth(); ++j) {
-            image_tmp.SetPixel(i, j,
-                               image_tmp.GetImagePixel(i, j).GetBlue() > this->threshold_
-                                   ? filters::utils::pixels::WHITE
-                                   : filters::utils::pixels::BLACK);
+            // Pixel<double> tmp_pixel =
+            //     Pixel<double>::NormalizePixel<double>(GetPixelViaConvolution(image_tmp.GetImagePixels(), i, j));
+            image_tmp.SetPixel(
+                i, j,
+                (image_tmp.GetImagePixel(i, j).GetBlue() > this->threshold_ ? filters::utils::pixels::WHITE
+                                                                            : filters::utils::pixels::BLACK));
         }
     }
+
     return image_tmp;
 }
 
@@ -101,7 +104,8 @@ ImageBmp GaussianBlur::Apply(const ImageBmp &image) {
     for (size_t i = 0; i < image.GetHeight(); ++i) {
         std::vector<Pixel<uint8_t>> row(image.GetWidth());
         for (size_t j = 0; j < image.GetWidth(); ++j) {
-            row[j] = new_data_tmp[i][j].DividePixelBy(this->gaussian_denominator_).NormalizePixel();
+            row[j] =
+                Pixel<double>::NormalizePixel<uint8_t>(new_data_tmp[i][j].DividePixelBy(this->gaussian_denominator_));
         }
         new_data[i] = std::move(row);
     }

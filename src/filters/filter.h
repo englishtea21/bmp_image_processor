@@ -60,22 +60,36 @@ protected:
                                                   size_t y, size_t x, bool transpose_matrix = false) const {
         Pixel<ComputationType> pixel = Pixel<ComputationType>{filters::utils::pixels::BLACK};
 
-        for (size_t i = 0; i < conv_matrix_.size(); ++i) {
-            for (size_t j = 0; j < conv_matrix_.front().size(); ++j) {
-                size_t clamped_y = static_cast<size_t>(
-                    std::clamp(static_cast<int64_t>(i + y) - static_cast<int64_t>(conv_matrix_.size() / 2),
-                               static_cast<int64_t>(0), static_cast<int64_t>(image_bmp_matrix.size()) - 1));
-                size_t clamped_x = static_cast<size_t>(
-                    std::clamp(static_cast<int64_t>(j + x) - static_cast<int64_t>(conv_matrix_.size() / 2),
-                               static_cast<int64_t>(0), static_cast<int64_t>(image_bmp_matrix.front().size()) - 1));
-                Pixel<InputType> tmp_pixel = image_bmp_matrix[clamped_y][clamped_x];
-                if (!transpose_matrix) {
+        if (!transpose_matrix) {
+            for (size_t i = 0; i < conv_matrix_.size(); ++i) {
+                for (size_t j = 0; j < conv_matrix_.front().size(); ++j) {
+                    size_t clamped_y = static_cast<size_t>(
+                        std::clamp(static_cast<int64_t>(i + y) - static_cast<int64_t>(conv_matrix_.size() / 2),
+                                   static_cast<int64_t>(0), static_cast<int64_t>(image_bmp_matrix.size()) - 1));
+                    size_t clamped_x = static_cast<size_t>(
+                        std::clamp(static_cast<int64_t>(j + x) - static_cast<int64_t>(conv_matrix_.size() / 2),
+                                   static_cast<int64_t>(0), static_cast<int64_t>(image_bmp_matrix.front().size()) - 1));
+                    Pixel<InputType> tmp_pixel = image_bmp_matrix[clamped_y][clamped_x];
+
                     pixel += tmp_pixel.MultiplyPixelBy(conv_matrix_[i][j]);
-                } else {
+                }
+            }
+        } else {
+            for (size_t j = 0; j < conv_matrix_.size(); ++j) {
+                for (size_t i = 0; i < conv_matrix_.front().size(); ++i) {
+                    size_t clamped_y = static_cast<size_t>(
+                        std::clamp(static_cast<int64_t>(i + y) - static_cast<int64_t>(conv_matrix_.size() / 2),
+                                   static_cast<int64_t>(0), static_cast<int64_t>(image_bmp_matrix.size()) - 1));
+                    size_t clamped_x = static_cast<size_t>(
+                        std::clamp(static_cast<int64_t>(j + x) - static_cast<int64_t>(conv_matrix_.size() / 2),
+                                   static_cast<int64_t>(0), static_cast<int64_t>(image_bmp_matrix.front().size()) - 1));
+                    Pixel<InputType> tmp_pixel = image_bmp_matrix[clamped_y][clamped_x];
+
                     pixel += tmp_pixel.MultiplyPixelBy(conv_matrix_[j][i]);
                 }
             }
         }
+
         return pixel;
     }
 
@@ -86,7 +100,8 @@ public:
         for (size_t i = 0; i < image.GetHeight(); ++i) {
             std::vector<Pixel<uint8_t>> row(image.GetWidth());
             for (size_t j = 0; j < image.GetWidth(); ++j) {
-                row[j] = std::move(this->GetPixelViaConvolution(image.GetImagePixels(), i, j).NormalizePixel());
+                row[j] = std::move(
+                    Pixel<double>::NormalizePixel<uint8_t>(GetPixelViaConvolution(image.GetImagePixels(), i, j)));
             }
             new_data[i] = std::move(row);
         }

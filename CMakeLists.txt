@@ -5,12 +5,12 @@ project(image_processor)
 
 add_executable(
     image_processor
-    image_processor.cpp
+    src/main/image_processor.cpp
 )
-add_subdirectory(filters)
-add_subdirectory(image)
-add_subdirectory(input_output)
-add_subdirectory(parser)
+add_subdirectory(src/filters)
+add_subdirectory(src/image)
+add_subdirectory(src/input_output)
+add_subdirectory(src/parser)
 
 # Enable AddressSanitizer for Debug builds
 # if(CMAKE_BUILD_TYPE STREQUAL "Debug")

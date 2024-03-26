@@ -1,6 +1,7 @@
 #include "filter.h"
 
 namespace filters {
+
 Crop::Crop(size_t crop_width, size_t crop_height) {
     this->crop_width_ = crop_width;
     this->crop_height_ = crop_height;
@@ -167,7 +168,7 @@ Pixel<uint8_t> Pixelization::GetPixel(const ImageBmp &image, size_t y, size_t x)
                      [](auto lhs, auto rhs) { return lhs->GetBlue() < rhs->GetBlue(); });
     uint8_t median_blue = (*median_it)->GetBlue();
 
-    return {median_blue, median_green, median_red};
+    return Pixel<uint8_t>{median_blue, median_green, median_red};
 }
 
 Posterization::Posterization(uint8_t levels) : colors_quantization_(bmp24::utils::COLOR_CHANNELS_AMOUNT) {

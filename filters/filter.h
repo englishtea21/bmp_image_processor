@@ -58,28 +58,20 @@ protected:
     template <typename InputType>
     Pixel<ComputationType> GetPixelViaConvolution(const std::vector<std::vector<Pixel<InputType>>> &image_bmp_matrix,
                                                   size_t y, size_t x, bool transpose_matrix = false) const {
-        Pixel<ComputationType> pixel;
+        Pixel<ComputationType> pixel = Pixel<ComputationType>{filters::utils::pixels::BLACK};
 
-        if (!transpose_matrix) {
-            for (size_t i = 0; i < conv_matrix_.size(); ++i) {
-                for (size_t j = 0; j < conv_matrix_.front().size(); ++j) {
-                    size_t clamped_x = std::clamp(y + i, static_cast<size_t>(0), image_bmp_matrix.size() - 1);
-                    size_t clamped_y = std::clamp(x + j, static_cast<size_t>(0), image_bmp_matrix.front().size() - 1);
-                    Pixel<InputType> tmp_pixel = image_bmp_matrix[clamped_x][clamped_y];
+        for (size_t i = 0; i < conv_matrix_.size(); ++i) {
+            for (size_t j = 0; j < conv_matrix_.front().size(); ++j) {
+                size_t clamped_x = std::clamp(y + i - 1, static_cast<size_t>(0), image_bmp_matrix.size() - 1);
+                size_t clamped_y = std::clamp(x + j - 1, static_cast<size_t>(0), image_bmp_matrix.front().size() - 1);
+                Pixel<InputType> tmp_pixel = image_bmp_matrix[clamped_x][clamped_y];
+                if (!transpose_matrix) {
                     pixel += tmp_pixel.MultiplyPixelBy(conv_matrix_[i][j]);
-                }
-            }
-        } else {
-            for (size_t i = 0; i < conv_matrix_.front().size(); ++i) {
-                for (size_t j = 0; j < conv_matrix_.size(); ++j) {
-                    size_t clamped_x = std::clamp(y + i, static_cast<size_t>(0), image_bmp_matrix.size() - 1);
-                    size_t clamped_y = std::clamp(x + j, static_cast<size_t>(0), image_bmp_matrix.front().size() - 1);
-                    Pixel<InputType> tmp_pixel = image_bmp_matrix[clamped_x][clamped_y];
+                } else {
                     pixel += tmp_pixel.MultiplyPixelBy(conv_matrix_[j][i]);
                 }
             }
         }
-
         return pixel;
     }
 

@@ -30,8 +30,7 @@ public:
     T GetGreen() const;
     T GetRed() const;
 
-    template <typename U>
-    static Pixel<U> NormalizePixel(const Pixel<T> &pixel);
+    Pixel<uint8_t> NormalizePixel();
 
     template <typename U>
     Pixel<U> MultiplyPixelBy(U mult) const;
@@ -124,14 +123,15 @@ auto Pixel<T>::GetRed() const -> T {
 }
 
 template <typename T>
-template <typename U>
-Pixel<U> Pixel<T>::NormalizePixel(const Pixel<T> &pixel) {
-    return Pixel<U>{std::clamp(static_cast<U>(pixel.blue_), static_cast<U>(0),
-                               static_cast<U>(bmp24::utils::COLOR_CHANNEL_MAX_VALUE)),
-                    std::clamp(static_cast<U>(pixel.green_), static_cast<U>(0),
-                               static_cast<U>(bmp24::utils::COLOR_CHANNEL_MAX_VALUE)),
-                    std::clamp(static_cast<U>(pixel.red_), static_cast<U>(0),
-                               static_cast<U>(bmp24::utils::COLOR_CHANNEL_MAX_VALUE))};
+Pixel<uint8_t> Pixel<T>::NormalizePixel() {
+    return Pixel<uint8_t> {
+        static_cast<uint8_t>(std::clamp(static_cast<double>(this.blue_), static_cast<double>(0),
+                                        static_cast<double>(bmp24::utils::COLOR_CHANNEL_MAX_VALUE))),
+            static_cast<uint8_t>(std::clamp(static_cast<double>(this.green_), static_cast<double>(0),
+                                            static_cast<double>(bmp24::utils::COLOR_CHANNEL_MAX_VALUE))),
+            static_cast<uint8_t>(std::clamp(static_cast<double>(this.red_), static_cast<double>(0),
+                                            static_cast<double>(bmp24::utils::COLOR_CHANNEL_MAX_VALUE)))
+    }
 }
 
 template <typename T>

@@ -100,8 +100,7 @@ public:
         for (size_t i = 0; i < image.GetHeight(); ++i) {
             std::vector<Pixel<uint8_t>> row(image.GetWidth());
             for (size_t j = 0; j < image.GetWidth(); ++j) {
-                row[j] = std::move(
-                    Pixel<double>::NormalizePixel<uint8_t>(GetPixelViaConvolution(image.GetImagePixels(), i, j)));
+                row[j] = std::move(GetPixelViaConvolution(image.GetImagePixels(), i, j).NormalizePixel());
             }
             new_data[i] = std::move(row);
         }

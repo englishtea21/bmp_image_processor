@@ -104,8 +104,7 @@ ImageBmp GaussianBlur::Apply(const ImageBmp &image) {
     for (size_t i = 0; i < image.GetHeight(); ++i) {
         std::vector<Pixel<uint8_t>> row(image.GetWidth());
         for (size_t j = 0; j < image.GetWidth(); ++j) {
-            row[j] =
-                Pixel<double>::NormalizePixel<uint8_t>(new_data_tmp[i][j].DividePixelBy(this->gaussian_denominator_));
+            row[j] = new_data_tmp[i][j].DividePixelBy(this->gaussian_denominator_).NormalizePixel();
         }
         new_data[i] = std::move(row);
     }

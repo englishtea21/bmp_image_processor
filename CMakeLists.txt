@@ -1,16 +1,20 @@
 set (CMAKE_CXX_STANDARD 20)
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
 cmake_minimum_required(VERSION 3.4)
-project(image_processor)
+project(image_processor_proj)
+
+enable_testing()
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+add_subdirectory(src)
+add_subdirectory(test_script)
 
 add_executable(
     image_processor
-    src/main/image_processor.cpp
+    main/image_processor.cpp
 )
-add_subdirectory(src/filters)
-add_subdirectory(src/image)
-add_subdirectory(src/input_output)
-add_subdirectory(src/parser)
 
 # Enable AddressSanitizer for Debug builds
 # if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -22,4 +26,6 @@ add_subdirectory(src/parser)
 
 
 # dependencies
-target_link_libraries(image_processor filters image input_output parser)
+target_link_libraries(image_processor image_processor_lib)
+
+set_target_properties(image_processor_lib PROPERTIES LINKER_LANGUAGE CXX)

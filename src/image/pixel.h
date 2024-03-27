@@ -20,6 +20,9 @@ public:
     explicit Pixel(const Pixel<U> &pixel);
 
     Pixel &operator=(const Pixel &other);
+    Pixel<T> &operator+=(const Pixel<T> &other);
+    Pixel<T> &operator-=(const Pixel<T> &other);
+    bool operator==(const Pixel<T> &other) const;
 
     ~Pixel() = default;
 
@@ -37,10 +40,6 @@ public:
 
     template <typename U>
     Pixel<U> DividePixelBy(U mult) const;
-
-    Pixel<T> &operator+=(const Pixel<T> &other);
-
-    Pixel<T> &operator-=(const Pixel<T> &other);
 
 private:
     T blue_;
@@ -94,6 +93,27 @@ Pixel<T> &Pixel<T>::operator=(const Pixel<T> &other) {
 }
 
 template <typename T>
+Pixel<T> &Pixel<T>::operator+=(const Pixel<T> &other) {
+    blue_ += other.blue_;
+    green_ += other.green_;
+    red_ += other.red_;
+    return *this;
+}
+
+template <typename T>
+Pixel<T> &Pixel<T>::operator-=(const Pixel<T> &other) {
+    blue_ -= other.blue_;
+    green_ -= other.green_;
+    red_ -= other.red_;
+    return *this;
+}
+
+template <typename T>
+bool Pixel<T>::operator==(const Pixel<T> &other) const {
+    return std::tie(blue_, green_, red_) == std::tie(other.blue_, other.green_, other.red_);
+}
+
+template <typename T>
 void Pixel<T>::SetPixel(T blue, T green, T red) {
     this->blue_ = blue;
     this->green_ = green;
@@ -130,22 +150,6 @@ Pixel<uint8_t> Pixel<T>::NormalizePixel() {
                                                           static_cast<double>(bmp24::utils::COLOR_CHANNEL_MAX_VALUE))),
                           static_cast<uint8_t>(std::clamp(static_cast<double>(red_), static_cast<double>(0),
                                                           static_cast<double>(bmp24::utils::COLOR_CHANNEL_MAX_VALUE)))};
-}
-
-template <typename T>
-Pixel<T> &Pixel<T>::operator+=(const Pixel<T> &other) {
-    blue_ += other.blue_;
-    green_ += other.green_;
-    red_ += other.red_;
-    return *this;
-}
-
-template <typename T>
-Pixel<T> &Pixel<T>::operator-=(const Pixel<T> &other) {
-    blue_ -= other.blue_;
-    green_ -= other.green_;
-    red_ -= other.red_;
-    return *this;
 }
 
 #endif  // PIXEL_H

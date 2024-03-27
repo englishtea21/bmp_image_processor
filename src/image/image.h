@@ -15,6 +15,7 @@ public:
     explicit ImageBmp(const std::vector<std::vector<Pixel<uint8_t>>> &image_pixels);
     ImageBmp(const ImageBmp &other);
     ~ImageBmp() = default;
+    bool operator==(const ImageBmp &other) const;
 
     size_t GetWidth() const;
     size_t GetHeight() const;

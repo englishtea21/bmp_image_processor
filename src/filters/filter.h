@@ -37,8 +37,6 @@ public:
 
 protected:
     ~PixelwiseFilter() override = default;
-
-private:
     virtual Pixel<uint8_t> GetPixel(const ImageBmp &image, size_t y, size_t x) const = 0;
 };
 
@@ -122,11 +120,13 @@ class Grayscale : public PixelwiseFilter {
 public:
     // ImageBmp Apply(const ImageBmp &image) const override;
     Grayscale() = default;
+
+protected:
     Pixel<uint8_t> GetPixel(const ImageBmp &image, size_t y, size_t x) const override;
 };
 
 class Negative : public PixelwiseFilter {
-public:
+protected:
     // ImageBmp Apply(const ImageBmp &image) const override;
     Pixel<uint8_t> GetPixel(const ImageBmp &image, size_t y, size_t x) const override;
 };
@@ -151,6 +151,7 @@ public:
     explicit GaussianBlur(double sigma);
     ImageBmp Apply(const ImageBmp &image) override;
 
+protected:
 private:
     size_t kernel_optimal_size_;
     double sigma_square_;

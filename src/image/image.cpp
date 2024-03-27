@@ -16,6 +16,10 @@ ImageBmp::ImageBmp(const std::vector<std::vector<Pixel<uint8_t>>> &image_pixels)
 ImageBmp::ImageBmp(const ImageBmp &other) : ImageBmp(other.GetImagePixels()) {
 }
 
+bool ImageBmp::operator==(const ImageBmp &other) const {
+    return this->image_pixels_ == other.image_pixels_;
+}
+
 size_t ImageBmp::GetWidth() const {
     return this->width_;
 }

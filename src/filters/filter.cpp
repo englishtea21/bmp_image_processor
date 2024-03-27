@@ -57,10 +57,9 @@ ImageBmp EdgeDetection::Apply(const ImageBmp &image) {
         for (size_t j = 0; j < image_tmp.GetWidth(); ++j) {
             // Pixel<double> tmp_pixel =
             //     Pixel<double>::NormalizePixel<double>(GetPixelViaConvolution(image_tmp.GetImagePixels(), i, j));
-            image_tmp.SetPixel(
-                i, j,
-                (image_tmp.GetImagePixel(i, j).GetBlue() > this->threshold_ ? filters::utils::pixels::WHITE
-                                                                            : filters::utils::pixels::BLACK));
+            image_tmp.SetPixel(i, j,
+                               (image_tmp.GetImagePixel(i, j).GetBlue() > threshold_ ? filters::utils::pixels::WHITE
+                                                                                     : filters::utils::pixels::BLACK));
         }
     }
 

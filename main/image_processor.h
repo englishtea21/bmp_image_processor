@@ -3,11 +3,11 @@
 
 #include <iostream>
 
-#include "../parser/parser.h"
-#include "../image/image.h"
-#include "../input_output/bmp24_reader.h"
-#include "../input_output/bmp24_writer.h"
-#include "../filters/filter.h"
+#include "../src/parser/parser.h"
+#include "../src/image/image.h"
+#include "../src/input_output/bmp24_reader.h"
+#include "../src/input_output/bmp24_writer.h"
+#include "../src/filters/filter.h"
 
 std::vector<parser::Token> GetTokens(int argc, char *argv[]);
 ImageBmp GetImage(const std::string &path);

@@ -1,3 +1,5 @@
+// NOLINTBEGIN
+
 /*
  *  Catch v2.13.7
  *  Generated: 2021-07-28 20:29:27.753164
@@ -17959,3 +17961,4 @@ using Catch::Detail::Approx;
 // end catch.hpp
 #endif // TWOBLUECUBES_SINGLE_INCLUDE_CATCH_HPP_INCLUDED
 
+// NOLINTEND

@@ -5,4 +5,4 @@ add_subdirectory(parser)
 
 add_library(image_processor_lib filters image input_output parser)
 
-target_link_libraries(image_processor_lib PUBLIC filters_lib image_lib input_output_lib parser_lib)
+target_link_libraries(image_processor_lib filters_lib image_lib input_output_lib parser_lib)

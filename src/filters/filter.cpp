@@ -26,11 +26,12 @@ ImageBmp Crop::Apply(const ImageBmp &image) {
 Pixel<uint8_t> Grayscale::GetPixel(const ImageBmp &image, size_t y, size_t x) const {
     Pixel<double> tmp_pixel(image.GetImagePixel(y, x));
 
-    tmp_pixel.SetPixel(filters::utils::matrices::GRAYSCALE_COLOR_RATIO[0] * static_cast<double>(tmp_pixel.GetBlue()) +
-                       filters::utils::matrices::GRAYSCALE_COLOR_RATIO[1] * static_cast<double>(tmp_pixel.GetGreen()) +
-                       filters::utils::matrices::GRAYSCALE_COLOR_RATIO[2] * static_cast<double>(tmp_pixel.GetRed()));
+    tmp_pixel.SetPixel(
+        std::round(filters::utils::matrices::GRAYSCALE_COLOR_RATIO[0] * static_cast<double>(tmp_pixel.GetBlue()) +
+                   filters::utils::matrices::GRAYSCALE_COLOR_RATIO[1] * static_cast<double>(tmp_pixel.GetGreen()) +
+                   filters::utils::matrices::GRAYSCALE_COLOR_RATIO[2] * static_cast<double>(tmp_pixel.GetRed())));
 
-    return Pixel<uint8_t>(tmp_pixel);
+    return tmp_pixel.NormalizePixel();
 }
 
 Pixel<uint8_t> Negative::GetPixel(const ImageBmp &image, size_t y, size_t x) const {

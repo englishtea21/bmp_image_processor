@@ -13,14 +13,14 @@ TEST_CASE("input_output", "[bmp24_io]") {
 
 TEST_CASE("simple filters", "[filter]") {
     // crop
-    ImageBmp lenna_cropped = filters::Crop(999, 1999).Apply(
+    ImageBmp lenna_cropped = filters::Crop(999, 1999).Apply(                       // NOLINT
         input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read());  // NOLINT
     REQUIRE(lenna_cropped == input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_crop.bmp").Read());
     REQUIRE(filters::Crop(100, 1).Apply(lenna_cropped) ==                                        // NOLINT
             input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_crop_crop.bmp").Read());  // NOLINT
-    REQUIRE(filters::Crop(50, 50).Apply(
-                input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag.bmp").Read()) ==  // NOLINT
-            input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_crop.bmp").Read());   // NOLINT
+    REQUIRE(filters::Crop(50, 50).Apply(                                                         // NOLINT
+                input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag.bmp").Read()) ==       // NOLINT
+            input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_crop.bmp").Read());        // NOLINT
 }
 
 TEST_CASE("pixelwise filters", "[pixelwise]") {
@@ -51,14 +51,14 @@ TEST_CASE("covvolutional filters", "[convolutional]") {
             input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_sharp.bmp").Read());
 
     // edge detection
-    ImageBmp flag_edged = filters::EdgeDetection(0.1).Apply(
+    ImageBmp flag_edged = filters::EdgeDetection(0.1).Apply(                      // NOLINT
         input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag.bmp").Read());  // NOLINT
     REQUIRE(flag_edged == input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_edge.bmp").Read());
     REQUIRE(filters::EdgeDetection(0.5).Apply(flag_edged) ==                                    // NOLINT
             input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_edge_edge.bmp").Read());  // NOLINT
 
     // blur
-    ImageBmp lenna_blured = filters::GaussianBlur(7.5).Apply(
+    ImageBmp lenna_blured = filters::GaussianBlur(7.5).Apply(                      // NOLINT
         input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read());  // NOLINT
     REQUIRE(lenna_blured == input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_blur.bmp").Read());
     REQUIRE(filters::GaussianBlur(3).Apply(lenna_blured) ==                                      // NOLINT

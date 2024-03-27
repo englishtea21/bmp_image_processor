@@ -41,10 +41,11 @@ Pixel<uint8_t> Negative::GetPixel(const ImageBmp &image, size_t y, size_t x) con
     return Pixel<uint8_t>(tmp_pixel);
 }
 
-Sharpening::Sharpening() : ConvolutionalFilter(filters::utils::matrices::SHARPENNING) {
+Sharpening::Sharpening() : ConvolutionalFilter(filters::utils::matrices::SHARPENNING, Pixel<double>::MultiplyPixelBy) {
 }
 
-EdgeDetection::EdgeDetection(double threshold) : ConvolutionalFilter(filters::utils::matrices::EDGE_DETECTING) {
+EdgeDetection::EdgeDetection(double threshold)
+    : ConvolutionalFilter(filters::utils::matrices::EDGE_DETECTING, Pixel<double>::MultiplyPixelBy) {
     this->threshold_ = threshold;
 }
 
@@ -67,7 +68,7 @@ ImageBmp EdgeDetection::Apply(const ImageBmp &image) {
     return image_tmp;
 }
 
-GaussianBlur::GaussianBlur(double sigma) {
+GaussianBlur::GaussianBlur(double sigma) : ConvolutionalFilter(Pixel<double>::DividePixelBy) {
     this->kernel_optimal_size_ =
         static_cast<size_t>(filters::utils::gaussian_blur::ENOUGH_KERNEL_SIZE_IN_SIGMAS * sigma);
     this->kernel_optimal_size_ += kernel_optimal_size_ % 2 == 0 ? 1 : 0;
@@ -104,7 +105,7 @@ ImageBmp GaussianBlur::Apply(const ImageBmp &image) {
     for (size_t i = 0; i < image.GetHeight(); ++i) {
         std::vector<Pixel<uint8_t>> row(image.GetWidth());
         for (size_t j = 0; j < image.GetWidth(); ++j) {
-            row[j] = new_data_tmp[i][j].DividePixelBy(this->gaussian_denominator_).NormalizePixel();
+            row[j] = Pixel<double>::DividePixelBy(new_data_tmp[i][j], this->gaussian_denominator_).NormalizePixel();
         }
         new_data[i] = std::move(row);
     }
@@ -117,7 +118,7 @@ std::vector<std::vector<double>> GaussianBlur::Generate1DGaussianKernel() const 
     gaussian_kernel_1d.push_back(std::vector<double>(this->kernel_optimal_size_));
     for (size_t i = 0; i < this->kernel_optimal_size_ / 2; ++i) {
         gaussian_kernel_1d[0][i] =
-            1 / std::exp(std::pow(this->kernel_optimal_size_ / 2 - i, 2) / (2 * this->sigma_square_));
+            std::exp(std::pow(this->kernel_optimal_size_ / 2 - i, 2) / (2 * this->sigma_square_));
         gaussian_kernel_1d[0][this->kernel_optimal_size_ - i - 1] = gaussian_kernel_1d[0][i];
     }
     gaussian_kernel_1d[0][this->kernel_optimal_size_ / 2] = 1;

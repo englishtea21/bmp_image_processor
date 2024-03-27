@@ -36,11 +36,9 @@ public:
 
     Pixel<uint8_t> NormalizePixel();
 
-    template <typename U>
-    Pixel<U> MultiplyPixelBy(U mult) const;
+    static Pixel<T> MultiplyPixelBy(const Pixel<T> &pixel, T mult);
 
-    template <typename U>
-    Pixel<U> DividePixelBy(U mult) const;
+    static Pixel<T> DividePixelBy(const Pixel<T> &pixel, T div);
 
 private:
     T blue_;
@@ -49,23 +47,23 @@ private:
 };
 
 // Implementation
-template <typename T>
-template <typename U>
-Pixel<U> Pixel<T>::MultiplyPixelBy(U mult) const {
-    // checking the usage of allowed types
-    Pixel<U> pixel_copy{static_cast<U>(blue_) * mult, static_cast<U>(green_) * mult, static_cast<U>(red_) * mult};
+// template <typename T>
+// template <typename U>
+// Pixel<U> Pixel<T>::MultiplyPixelBy(U mult) const {
+//     // checking the usage of allowed types
+//     Pixel<U> pixel_copy{static_cast<U>(blue_) * mult, static_cast<U>(green_) * mult, static_cast<U>(red_) * mult};
 
-    return pixel_copy;
-}
+//     return pixel_copy;
+// }
 
-template <typename T>
-template <typename U>
-Pixel<U> Pixel<T>::DividePixelBy(U div) const {
-    // checking the usage of allowed types
-    Pixel<U> pixel_copy{static_cast<U>(blue_) / div, static_cast<U>(green_) / div, static_cast<U>(red_) / div};
+// template <typename T>
+// template <typename U>
+// Pixel<U> Pixel<T>::DividePixelBy(U div) const {
+//     // checking the usage of allowed types
+//     Pixel<U> pixel_copy{static_cast<U>(blue_) / div, static_cast<U>(green_) / div, static_cast<U>(red_) / div};
 
-    return pixel_copy;
-}
+//     return pixel_copy;
+// }
 
 template <typename T>
 // by default initialize pixel with zero num values for allowed numeric types
@@ -151,6 +149,16 @@ Pixel<uint8_t> Pixel<T>::NormalizePixel() {
                                                           static_cast<double>(bmp24::utils::COLOR_CHANNEL_MAX_VALUE))),
                           static_cast<uint8_t>(std::clamp(static_cast<double>(red_), static_cast<double>(0),
                                                           static_cast<double>(bmp24::utils::COLOR_CHANNEL_MAX_VALUE)))};
+}
+
+template <typename T>
+Pixel<T> Pixel<T>::MultiplyPixelBy(const Pixel<T> &pixel, T mult) {
+    return Pixel<T>{pixel.blue_ * mult, pixel.green_ * mult, pixel.red_ * mult};
+}
+
+template <typename T>
+Pixel<T> Pixel<T>::DividePixelBy(const Pixel<T> &pixel, T div) {
+    return Pixel<T>{pixel.blue_ / div, pixel.green_ / div, pixel.red_ / div};
 }
 
 #endif  // PIXEL_H

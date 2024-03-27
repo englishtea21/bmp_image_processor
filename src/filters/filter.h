@@ -6,6 +6,7 @@
 #include <memory>
 #include <numbers>
 #include <stdexcept>
+#include <functional>
 #include "utils.h"
 #include "../input_output/utils.h"
 #include "../image/image.h"
@@ -44,13 +45,20 @@ template <typename ComputationType>
 class ConvolutionalFilter : public Filter {
 
 protected:
+    using PixelOperation =
+        std::function<Pixel<ComputationType>(const Pixel<ComputationType> &pixel, ComputationType conv_matrix_value)>;
+
     std::vector<std::vector<ComputationType>> conv_matrix_;
 
-    ConvolutionalFilter() {
-    }
+    PixelOperation pixel_operation_;
+    ConvolutionalFilter() = delete;
     ~ConvolutionalFilter() override = default;
-    explicit ConvolutionalFilter(std::vector<std::vector<ComputationType>> conv_matrix) {
-        conv_matrix_ = conv_matrix;
+    ConvolutionalFilter(std::vector<std::vector<ComputationType>> conv_matrix,
+                        PixelOperation pixel_operation = Pixel<ComputationType>::MultiplyPixelBy)
+        : conv_matrix_(conv_matrix), pixel_operation_(pixel_operation) {
+    }
+    explicit ConvolutionalFilter(PixelOperation pixel_operation = Pixel<ComputationType>::MultiplyPixelBy)
+        : pixel_operation_(pixel_operation) {
     }
 
     template <typename InputType>
@@ -67,9 +75,10 @@ protected:
                     size_t clamped_x = static_cast<size_t>(
                         std::clamp(static_cast<int64_t>(j + x) - static_cast<int64_t>(conv_matrix_.size() / 2),
                                    static_cast<int64_t>(0), static_cast<int64_t>(image_bmp_matrix.front().size()) - 1));
-                    Pixel<InputType> tmp_pixel = image_bmp_matrix[clamped_y][clamped_x];
+                    Pixel<ComputationType> tmp_pixel{image_bmp_matrix[clamped_y][clamped_x]};
 
-                    pixel += tmp_pixel.MultiplyPixelBy(conv_matrix_[i][j]);
+                    // pixel += tmp_pixel.MultiplyPixelBy(conv_matrix_[i][j]);
+                    pixel += pixel_operation_(tmp_pixel, conv_matrix_[i][j]);
                 }
             }
         } else {
@@ -81,9 +90,9 @@ protected:
                     size_t clamped_x = static_cast<size_t>(
                         std::clamp(static_cast<int64_t>(j + x) - static_cast<int64_t>(conv_matrix_.size() / 2),
                                    static_cast<int64_t>(0), static_cast<int64_t>(image_bmp_matrix.front().size()) - 1));
-                    Pixel<InputType> tmp_pixel = image_bmp_matrix[clamped_y][clamped_x];
+                    Pixel<ComputationType> tmp_pixel{image_bmp_matrix[clamped_y][clamped_x]};
 
-                    pixel += tmp_pixel.MultiplyPixelBy(conv_matrix_[j][i]);
+                    pixel += pixel_operation_(tmp_pixel, conv_matrix_[j][i]);
                 }
             }
         }

@@ -53,8 +53,8 @@ protected:
     PixelOperation pixel_operation_;
     ConvolutionalFilter() = delete;
     ~ConvolutionalFilter() override = default;
-    ConvolutionalFilter(std::vector<std::vector<ComputationType>> conv_matrix,
-                        PixelOperation pixel_operation = Pixel<ComputationType>::MultiplyPixelBy)
+    explicit ConvolutionalFilter(std::vector<std::vector<ComputationType>> conv_matrix,
+                                 PixelOperation pixel_operation = Pixel<ComputationType>::MultiplyPixelBy)
         : conv_matrix_(conv_matrix), pixel_operation_(pixel_operation) {
     }
     explicit ConvolutionalFilter(PixelOperation pixel_operation = Pixel<ComputationType>::MultiplyPixelBy)

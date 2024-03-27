@@ -2,7 +2,7 @@ project(image_processor_tests)
 
 add_library(
         catch_main_lib
-        ../../../../contrib/catch/catch_main.cpp
+        ../../../contrib/catch/catch_main.cpp
 )
 
 target_include_directories(catch_main_lib PUBLIC ../../../contrib/catch)

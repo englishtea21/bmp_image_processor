@@ -1,4 +1,4 @@
-#include "../../../../contrib/catch/catch.hpp"
+#include "../../../contrib/catch/catch.hpp"
 #include "../main/image_processor.h"
 
 const std::string TEST_DATA_RELATIVE_PATH = "test_script/data/";

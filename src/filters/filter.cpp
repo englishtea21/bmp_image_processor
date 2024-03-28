@@ -77,26 +77,21 @@ GaussianBlur::GaussianBlur(double sigma) : ConvolutionalFilter(Pixel<double>::Di
 }
 
 ImageBmp GaussianBlur::Apply(const ImageBmp &image) {
-    std::vector<std::vector<Pixel<double>>> new_data_tmp(image.GetHeight());
+    std::vector<std::vector<Pixel<double>>> new_data_horizontal_blur(image.GetHeight());
 
     // apply kernel horizontally
     for (size_t i = 0; i < image.GetHeight(); ++i) {
         std::vector<Pixel<double>> row;
         row.reserve(image.GetWidth());
         for (size_t j = 0; j < image.GetWidth(); ++j) {
-            row.push_back(GetPixelViaConvolution<uint8_t>(image.GetImagePixels(), i, j, true));
+            row.push_back(GetPixelViaConvolution<uint8_t>(image.GetImagePixels(), i, j));
         }
-        new_data_tmp[i] = std::move(row);
+        new_data_horizontal_blur[i] = std::move(row);
     }
 
     // apply kernel vertically
-    for (size_t i = 0; i < image.GetHeight(); ++i) {
-        for (size_t j = 0; j < image.GetWidth(); ++j) {
-            new_data_tmp[i][j] = GetPixelViaConvolution<double>(new_data_tmp, i, j, false);
-        }
-    }
-
-    // finally multiply each pixel by common coefficient and normalize it
+    // divide each pixel by common divisor
+    // normalize pixel to uint8_t
     std::vector<std::vector<Pixel<uint8_t>>> new_data(image.GetHeight());
 
     for (size_t i = 0; i < image.GetHeight(); ++i) {
@@ -104,7 +99,9 @@ ImageBmp GaussianBlur::Apply(const ImageBmp &image) {
         row.reserve(image.GetWidth());
         for (size_t j = 0; j < image.GetWidth(); ++j) {
             row.push_back(
-                Pixel<double>::DividePixelBy(new_data_tmp[i][j], this->gaussian_denominator_).NormalizePixel());
+                Pixel<double>::DividePixelBy(GetPixelViaConvolution<double>(new_data_horizontal_blur, i, j, true),
+                                             this->gaussian_denominator_)
+                    .NormalizePixel());
         }
         new_data[i] = std::move(row);
     }

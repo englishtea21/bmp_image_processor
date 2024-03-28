@@ -18,7 +18,8 @@ double CalcImagesDistance(const ImageBmp& image1, const ImageBmp& image2) {
 }
 
 double CalcPixelsDistance(const Pixel<uint8_t>& pixel1, const Pixel<uint8_t>& pixel2) {
-    return std::pow(pixel1.GetBlue() - pixel2.GetBlue(), 2) + std::pow(pixel1.GetGreen() - pixel2.GetGreen(), 2) +
-           std::pow(pixel1.GetRed() - pixel2.GetRed(), 2);
+    return std::pow(static_cast<int32_t>(pixel1.GetBlue()) - static_cast<int32_t>(pixel2.GetBlue()), 2) +
+           std::pow(static_cast<int32_t>(pixel1.GetGreen()) - static_cast<int32_t>(pixel2.GetGreen()), 2) +
+           std::pow(static_cast<int32_t>(pixel1.GetRed()) - static_cast<int32_t>(pixel2.GetRed()), 2);
 }
 }  // namespace test_helper

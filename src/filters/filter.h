@@ -90,7 +90,7 @@ protected:
                     size_t clamped_x = static_cast<size_t>(
                         std::clamp(static_cast<int64_t>(j + x) - static_cast<int64_t>(conv_matrix_.size() / 2),
                                    static_cast<int64_t>(0), static_cast<int64_t>(image_bmp_matrix.front().size()) - 1));
-                    Pixel<ComputationType> tmp_pixel{image_bmp_matrix[clamped_y][clamped_x]};
+                    Pixel<ComputationType> tmp_pixel{image_bmp_matrix[clamped_x][clamped_y]};
 
                     pixel += pixel_operation_(tmp_pixel, conv_matrix_[j][i]);
                 }

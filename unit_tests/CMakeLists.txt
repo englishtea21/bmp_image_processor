@@ -7,6 +7,6 @@ add_library(
 
 target_include_directories(catch_main_lib PUBLIC ../../../contrib/catch)
 
-add_executable(unit_tests tests.cpp)
+add_executable(start_unit_tests tests.cpp test_helper.h test_helper.cpp)
 
-target_link_libraries(unit_tests image_processor_lib catch_main_lib)
+target_link_libraries(start_unit_tests image_processor_lib catch_main_lib)

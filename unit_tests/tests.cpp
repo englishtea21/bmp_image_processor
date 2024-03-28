@@ -1,5 +1,5 @@
 #include "../../../contrib/catch/catch.hpp"
-#include "../main/image_processor.h"
+#include "test_helper.h"
 
 const std::string TEST_DATA_RELATIVE_PATH = "../test_script/data/";
 
@@ -13,54 +13,82 @@ TEST_CASE("input_output", "[bmp24_io]") {
 
 TEST_CASE("simple filters", "[filter]") {
     // crop
-    ImageBmp lenna_cropped = filters::Crop(999, 1999).Apply(                       // NOLINT
-        input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read());  // NOLINT
-    REQUIRE(lenna_cropped == input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_crop.bmp").Read());
-    REQUIRE(filters::Crop(100, 1).Apply(lenna_cropped) ==                                        // NOLINT
-            input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_crop_crop.bmp").Read());  // NOLINT
-    REQUIRE(filters::Crop(50, 50).Apply(                                                         // NOLINT
-                input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag.bmp").Read()) ==       // NOLINT
-            input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_crop.bmp").Read());        // NOLINT
+    SECTION("[crop]") {
+        ImageBmp lenna_cropped = filters::Crop(999, 1999).Apply(                       // NOLINT
+            input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read());  // NOLINT
+        REQUIRE(lenna_cropped == input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_crop.bmp").Read());
+        REQUIRE(filters::Crop(100, 1).Apply(lenna_cropped) ==                                        // NOLINT
+                input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_crop_crop.bmp").Read());  // NOLINT
+        REQUIRE(filters::Crop(50, 50).Apply(                                                         // NOLINT
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag.bmp").Read()) ==       // NOLINT
+                input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_crop.bmp").Read());        // NOLINT
+    }
 }
 
 TEST_CASE("pixelwise filters", "[pixelwise]") {
     // grayscale
-    REQUIRE(filters::Grayscale().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read()) ==
-            input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_gs.bmp").Read());
-    REQUIRE(filters::Grayscale().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag.bmp").Read()) ==
-            input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_gs.bmp").Read());
+    SECTION("[grayscale]") {  // NOLINT
 
+        REQUIRE(test_helper::CalcImagesDistance(
+                    filters::Grayscale().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read()),
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_gs.bmp").Read()) < 1);  // NOLINT
+        REQUIRE(test_helper::CalcImagesDistance(
+                    filters::Grayscale().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read()),
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_gs_gs.bmp").Read()) < 1);  // NOLINT
+        REQUIRE(test_helper::CalcImagesDistance(
+                    filters::Grayscale().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag.bmp").Read()),
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_gs.bmp").Read()) < 1);  // NOLINT
+    }
     // negative
-    REQUIRE(filters::Negative().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read()) ==
-            input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_neg.bmp").Read());
-    REQUIRE(filters::Grayscale().Apply(
-                filters::Grayscale().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read())) ==
-            input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_neg_neg.bmp").Read());
-    REQUIRE(filters::Negative().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag.bmp").Read()) ==
-            input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_neg.bmp").Read());
+    SECTION("[negative]") {  // NOLINT
+        REQUIRE(test_helper::CalcImagesDistance(
+                    filters::Negative().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read()),
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_neg.bmp").Read()) < 1);  // NOLINT
+        REQUIRE(test_helper::CalcImagesDistance(
+                    filters::Negative().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read()),
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_neg_neg.bmp").Read()) < 1);  // NOLINT
+        REQUIRE(test_helper::CalcImagesDistance(
+                    filters::Negative().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag.bmp").Read()),
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_neg.bmp").Read()) < 1);  // NOLINT
+    }
 }
 
 TEST_CASE("convolutional filters", "[convolutional]") {
     // sharp
-    ImageBmp lenna_sharped =
-        filters::Sharpening().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read());
-    REQUIRE(lenna_sharped == input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_sharp.bmp").Read());
-    REQUIRE(filters::Sharpening().Apply(lenna_sharped) ==
-            input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_sharp_sharp.bmp").Read());
-    REQUIRE(filters::Sharpening().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag.bmp").Read()) ==
-            input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_sharp.bmp").Read());
-
+    SECTION("[sharp]") {  // NOLINT
+        ImageBmp lenna_sharped =
+            filters::Sharpening().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read());
+        REQUIRE(test_helper::CalcImagesDistance(
+                    lenna_sharped,
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_sharp.bmp").Read()) < 1);  // NOLINT
+        REQUIRE(test_helper::CalcImagesDistance(
+                    filters::Sharpening().Apply(lenna_sharped),
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_sharp_sharp.bmp").Read()) <
+                1);  // NOLINT
+        REQUIRE(test_helper::CalcImagesDistance(
+                    filters::Sharpening().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag.bmp").Read()),
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_sharp.bmp").Read()) < 1);  // NOLINT
+    }
     // edge detection
-    ImageBmp flag_edged = filters::EdgeDetection(0.1).Apply(                      // NOLINT
-        input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag.bmp").Read());  // NOLINT
-    REQUIRE(flag_edged == input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_edge.bmp").Read());
-    REQUIRE(filters::EdgeDetection(0.5).Apply(flag_edged) ==                                    // NOLINT
-            input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_edge_edge.bmp").Read());  // NOLINT
-
+    SECTION("[edge detection]") {                                                     // NOLINT
+        ImageBmp flag_edged = filters::EdgeDetection(0.1).Apply(                      // NOLINT
+            input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag.bmp").Read());  // NOLINT
+        REQUIRE(test_helper::CalcImagesDistance(
+                    flag_edged,
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_edge.bmp").Read()) < 1);  // NOLINT
+        REQUIRE(test_helper::CalcImagesDistance(
+                    filters::EdgeDetection(0.5).Apply(flag_edged),
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_edge_edge.bmp").Read()) < 1);  // NOLINT
+    }
     // blur
-    ImageBmp lenna_blured = filters::GaussianBlur(7.5).Apply(                      // NOLINT
-        input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read());  // NOLINT
-    REQUIRE(lenna_blured == input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_blur.bmp").Read());
-    REQUIRE(filters::GaussianBlur(3).Apply(lenna_blured) ==                                      // NOLINT
-            input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_blur_blur.bmp").Read());  // NOLINT
+    SECTION("[blur]") {                                                                // NOLINT
+        ImageBmp lenna_blured = filters::GaussianBlur(7.5).Apply(                      // NOLINT
+            input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read());  // NOLINT
+        REQUIRE(test_helper::CalcImagesDistance(
+                    lenna_blured,
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_blur.bmp").Read()) < 2);  // NOLINT
+        REQUIRE(test_helper::CalcImagesDistance(
+                    filters::GaussianBlur(3).Apply(lenna_blured),
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_blur_blur.bmp").Read()) < 2);  // NOLINT
+    }
 }

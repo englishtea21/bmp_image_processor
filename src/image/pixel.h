@@ -48,23 +48,6 @@ private:
 };
 
 // Implementation
-// template <typename T>
-// template <typename U>
-// Pixel<U> Pixel<T>::MultiplyPixelBy(U mult) const {
-//     // checking the usage of allowed types
-//     Pixel<U> pixel_copy{static_cast<U>(blue_) * mult, static_cast<U>(green_) * mult, static_cast<U>(red_) * mult};
-
-//     return pixel_copy;
-// }
-
-// template <typename T>
-// template <typename U>
-// Pixel<U> Pixel<T>::DividePixelBy(U div) const {
-//     // checking the usage of allowed types
-//     Pixel<U> pixel_copy{static_cast<U>(blue_) / div, static_cast<U>(green_) / div, static_cast<U>(red_) / div};
-
-//     return pixel_copy;
-// }
 
 template <typename T>
 // by default initialize pixel with zero num values for allowed numeric types

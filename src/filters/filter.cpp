@@ -69,8 +69,8 @@ ImageBmp EdgeDetection::Apply(const ImageBmp &image) {
 }
 
 GaussianBlur::GaussianBlur(double sigma) : ConvolutionalFilter(Pixel<double>::DividePixelBy) {
-    this->kernel_optimal_size_ =
-        static_cast<size_t>(filters::utils::gaussian_blur::ENOUGH_KERNEL_SIZE_IN_SIGMAS * sigma);
+    this->kernel_optimal_size_ = static_cast<size_t>(
+        std::ceil(static_cast<double>(filters::utils::gaussian_blur::ENOUGH_KERNEL_SIZE_IN_SIGMAS) * sigma));
     this->kernel_optimal_size_ += kernel_optimal_size_ % 2 == 0 ? 1 : 0;
     this->sigma_square_ = sigma * sigma;
     this->gaussian_denominator_ = 2 * std::numbers::pi * this->sigma_square_;

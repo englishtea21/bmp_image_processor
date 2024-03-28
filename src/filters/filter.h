@@ -82,20 +82,21 @@ protected:
                 }
             }
         } else {
-            for (size_t j = 0; j < conv_matrix_.size(); ++j) {
-                for (size_t i = 0; i < conv_matrix_.front().size(); ++i) {
+            for (size_t i = 0; i < conv_matrix_[0].size(); ++i) {
+                for (size_t j = 0; j < conv_matrix_.size(); ++j) {
                     size_t clamped_y = static_cast<size_t>(
-                        std::clamp(static_cast<int64_t>(i + y) - static_cast<int64_t>(conv_matrix_.size() / 2),
+                        std::clamp(static_cast<int64_t>(i + y) - static_cast<int64_t>(conv_matrix_[0].size() / 2),
                                    static_cast<int64_t>(0), static_cast<int64_t>(image_bmp_matrix.size()) - 1));
                     size_t clamped_x = static_cast<size_t>(
                         std::clamp(static_cast<int64_t>(j + x) - static_cast<int64_t>(conv_matrix_.size() / 2),
-                                   static_cast<int64_t>(0), static_cast<int64_t>(image_bmp_matrix.front().size()) - 1));
+                                   static_cast<int64_t>(0), static_cast<int64_t>(image_bmp_matrix[0].size()) - 1));
                     Pixel<ComputationType> tmp_pixel{image_bmp_matrix[clamped_y][clamped_x]};
 
+                    // pixel += tmp_pixel.MultiplyPixelBy(conv_matrix_[j][i]);
                     pixel += pixel_operation_(tmp_pixel, conv_matrix_[j][i]);
                 }
             }
-        }
+        } 
 
         return pixel;
     }

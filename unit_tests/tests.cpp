@@ -31,25 +31,31 @@ TEST_CASE("pixelwise filters", "[pixelwise]") {
 
         REQUIRE(test_helper::CalcImagesDistance(
                     filters::Grayscale().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read()),
-                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_gs.bmp").Read()) < 1);  // NOLINT
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_gs.bmp").Read()) <
+                1 * bmp24::utils::COLOR_CHANNEL_MAX_VALUE);  // NOLINT
         REQUIRE(test_helper::CalcImagesDistance(
                     filters::Grayscale().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read()),
-                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_gs_gs.bmp").Read()) < 1);  // NOLINT
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_gs_gs.bmp").Read()) <
+                1 * bmp24::utils::COLOR_CHANNEL_MAX_VALUE);  // NOLINT
         REQUIRE(test_helper::CalcImagesDistance(
                     filters::Grayscale().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag.bmp").Read()),
-                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_gs.bmp").Read()) < 1);  // NOLINT
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_gs.bmp").Read()) <
+                1 * bmp24::utils::COLOR_CHANNEL_MAX_VALUE);  // NOLINT
     }
     // negative
     SECTION("[negative]") {  // NOLINT
         REQUIRE(test_helper::CalcImagesDistance(
                     filters::Negative().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read()),
-                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_neg.bmp").Read()) < 1);  // NOLINT
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_neg.bmp").Read()) <
+                1 * bmp24::utils::COLOR_CHANNEL_MAX_VALUE);  // NOLINT
         REQUIRE(test_helper::CalcImagesDistance(
                     filters::Negative().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read()),
-                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_neg_neg.bmp").Read()) < 1);  // NOLINT
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_neg_neg.bmp").Read()) <
+                1 * bmp24::utils::COLOR_CHANNEL_MAX_VALUE);  // NOLINT
         REQUIRE(test_helper::CalcImagesDistance(
                     filters::Negative().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag.bmp").Read()),
-                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_neg.bmp").Read()) < 1);  // NOLINT
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_neg.bmp").Read()) <
+                1 * bmp24::utils::COLOR_CHANNEL_MAX_VALUE);  // NOLINT
     }
 }
 
@@ -60,14 +66,16 @@ TEST_CASE("convolutional filters", "[convolutional]") {
             filters::Sharpening().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read());
         REQUIRE(test_helper::CalcImagesDistance(
                     lenna_sharped,
-                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_sharp.bmp").Read()) < 1);  // NOLINT
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_sharp.bmp").Read()) <
+                1 * bmp24::utils::COLOR_CHANNEL_MAX_VALUE);  // NOLINT
         REQUIRE(test_helper::CalcImagesDistance(
                     filters::Sharpening().Apply(lenna_sharped),
                     input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_sharp_sharp.bmp").Read()) <
-                1);  // NOLINT
+                1 * bmp24::utils::COLOR_CHANNEL_MAX_VALUE);  // NOLINT
         REQUIRE(test_helper::CalcImagesDistance(
                     filters::Sharpening().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag.bmp").Read()),
-                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_sharp.bmp").Read()) < 1);  // NOLINT
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_sharp.bmp").Read()) <
+                1 * bmp24::utils::COLOR_CHANNEL_MAX_VALUE);  // NOLINT
     }
     // edge detection
     SECTION("[edge detection]") {                                                     // NOLINT
@@ -75,10 +83,12 @@ TEST_CASE("convolutional filters", "[convolutional]") {
             input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag.bmp").Read());  // NOLINT
         REQUIRE(test_helper::CalcImagesDistance(
                     flag_edged,
-                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_edge.bmp").Read()) < 1);  // NOLINT
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_edge.bmp").Read()) <
+                1 * bmp24::utils::COLOR_CHANNEL_MAX_VALUE);  // NOLINT
         REQUIRE(test_helper::CalcImagesDistance(
-                    filters::EdgeDetection(0.5).Apply(flag_edged),                                           // NOLINT
-                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_edge_edge.bmp").Read()) < 1);  // NOLINT
+                    filters::EdgeDetection(0.5).Apply(flag_edged),  // NOLINT
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_edge_edge.bmp").Read()) <
+                1 * bmp24::utils::COLOR_CHANNEL_MAX_VALUE);  // NOLINT
     }
     // blur
     SECTION("[blur]") {                                                                // NOLINT
@@ -86,9 +96,11 @@ TEST_CASE("convolutional filters", "[convolutional]") {
             input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read());  // NOLINT
         REQUIRE(test_helper::CalcImagesDistance(
                     lenna_blured,
-                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_blur.bmp").Read()) < 2);  // NOLINT
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_blur.bmp").Read()) <
+                2 * bmp24::utils::COLOR_CHANNEL_MAX_VALUE);  // NOLINT
         REQUIRE(test_helper::CalcImagesDistance(
                     filters::GaussianBlur(3).Apply(lenna_blured),
-                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_blur_blur.bmp").Read()) < 2);  // NOLINT
+                    input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna_blur_blur.bmp").Read()) <
+                2 * bmp24::utils::COLOR_CHANNEL_MAX_VALUE);  // NOLINT
     }
 }

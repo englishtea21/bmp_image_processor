@@ -57,8 +57,6 @@ ImageBmp EdgeDetection::Apply(const ImageBmp &image) {
 
     for (size_t i = 0; i < image_tmp.GetHeight(); ++i) {
         for (size_t j = 0; j < image_tmp.GetWidth(); ++j) {
-            // Pixel<double> tmp_pixel =
-            //     Pixel<double>::NormalizePixel<double>(GetPixelViaConvolution(image_tmp.GetImagePixels(), i, j));
             image_tmp.SetPixel(i, j,
                                (image_tmp.GetImagePixel(i, j).GetBlue() > threshold_ ? filters::utils::pixels::WHITE
                                                                                      : filters::utils::pixels::BLACK));
@@ -71,9 +69,9 @@ ImageBmp EdgeDetection::Apply(const ImageBmp &image) {
 GaussianBlur::GaussianBlur(double sigma) : ConvolutionalFilter(Pixel<double>::DividePixelBy) {
     this->kernel_optimal_size_ = static_cast<size_t>(
         std::ceil(static_cast<double>(filters::utils::gaussian_blur::ENOUGH_KERNEL_SIZE_IN_SIGMAS) * sigma));
-    this->kernel_optimal_size_ += kernel_optimal_size_ % 2 == 0 ? 1 : 0;
+    // this->kernel_optimal_size_ += kernel_optimal_size_ % 2 == 0 ? 1 : 0;
     this->sigma_square_ = sigma * sigma;
-    this->gaussian_denominator_ = 2 * std::numbers::pi * this->sigma_square_;
+    this->gaussian_denominator_ = 2 * std::numbers::pi * sigma * sigma;
 
     conv_matrix_ = Generate1DGaussianKernel();
 }

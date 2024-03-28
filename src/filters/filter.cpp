@@ -46,7 +46,7 @@ Sharpening::Sharpening() : ConvolutionalFilter(filters::utils::matrices::SHARPEN
 
 EdgeDetection::EdgeDetection(double threshold)
     : ConvolutionalFilter(filters::utils::matrices::EDGE_DETECTING, Pixel<double>::MultiplyPixelBy) {
-    this->threshold_ = threshold;
+    this->threshold_ = threshold * bmp24::utils::COLOR_CHANNEL_MAX_VALUE;
 }
 
 ImageBmp EdgeDetection::Apply(const ImageBmp &image) {

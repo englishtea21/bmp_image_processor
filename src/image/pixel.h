@@ -2,6 +2,7 @@
 #define PIXEL_H
 
 #include <algorithm>
+#include <cmath>
 #include <cstdint>
 #include <tuple>
 #include "../input_output/utils.h"
@@ -143,6 +144,15 @@ auto Pixel<T>::GetRed() const -> T {
 
 template <typename T>
 Pixel<uint8_t> Pixel<T>::NormalizePixel() {
+    if constexpr (std::is_same_v<T, double> || std::is_same_v<T, long double>) {
+        return Pixel<uint8_t>{
+            static_cast<uint8_t>(std::round(std::clamp(static_cast<double>(blue_), static_cast<double>(0),
+                                                       static_cast<double>(bmp24::utils::COLOR_CHANNEL_MAX_VALUE)))),
+            static_cast<uint8_t>(std::round(std::clamp(static_cast<double>(green_), static_cast<double>(0),
+                                                       static_cast<double>(bmp24::utils::COLOR_CHANNEL_MAX_VALUE)))),
+            static_cast<uint8_t>(std::round(std::clamp(static_cast<double>(red_), static_cast<double>(0),
+                                                       static_cast<double>(bmp24::utils::COLOR_CHANNEL_MAX_VALUE))))};
+    }
     return Pixel<uint8_t>{static_cast<uint8_t>(std::clamp(static_cast<double>(blue_), static_cast<double>(0),
                                                           static_cast<double>(bmp24::utils::COLOR_CHANNEL_MAX_VALUE))),
                           static_cast<uint8_t>(std::clamp(static_cast<double>(green_), static_cast<double>(0),

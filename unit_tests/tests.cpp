@@ -1,7 +1,7 @@
 #include "../../../contrib/catch/catch.hpp"
 #include "../main/image_processor.h"
 
-const std::string TEST_DATA_RELATIVE_PATH = "test_script/data/";
+const std::string TEST_DATA_RELATIVE_PATH = "../test_script/data/";
 
 TEST_CASE("input_output", "[bmp24_io]") {
     const ImageBmp image_read = input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read();
@@ -40,7 +40,7 @@ TEST_CASE("pixelwise filters", "[pixelwise]") {
             input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_neg.bmp").Read());
 }
 
-TEST_CASE("covvolutional filters", "[convolutional]") {
+TEST_CASE("convolutional filters", "[convolutional]") {
     // sharp
     ImageBmp lenna_sharped =
         filters::Sharpening().Apply(input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "lenna.bmp").Read());

@@ -7,7 +7,7 @@ project(image_processor_proj)
 enable_testing()
 
 add_subdirectory(src)
-add_subdirectory(test_script)
+add_subdirectory(unit_tests)
 
 add_executable(
     image_processor

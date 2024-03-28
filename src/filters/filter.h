@@ -96,7 +96,7 @@ protected:
                     pixel += pixel_operation_(tmp_pixel, conv_matrix_[j][i]);
                 }
             }
-        } 
+        }
 
         return pixel;
     }

@@ -7,7 +7,7 @@
 #include "../image/pixel.h"
 
 namespace filters::utils::gaussian_blur {
-const size_t ENOUGH_KERNEL_SIZE_IN_SIGMAS = 6;
+const size_t ENOUGH_KERNEL_SIZE_IN_SIGMAS = 7;
 }  // namespace filters::utils::gaussian_blur
 
 namespace filters::utils::matrices {

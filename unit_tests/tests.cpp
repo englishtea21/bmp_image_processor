@@ -77,7 +77,7 @@ TEST_CASE("convolutional filters", "[convolutional]") {
                     flag_edged,
                     input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_edge.bmp").Read()) < 1);  // NOLINT
         REQUIRE(test_helper::CalcImagesDistance(
-                    filters::EdgeDetection(0.5).Apply(flag_edged),
+                    filters::EdgeDetection(0.5).Apply(flag_edged),                                           // NOLINT
                     input_output::ReaderBmp24(TEST_DATA_RELATIVE_PATH + "flag_edge_edge.bmp").Read()) < 1);  // NOLINT
     }
     // blur

@@ -14,7 +14,7 @@ double CalcImagesDistance(const ImageBmp& image1, const ImageBmp& image2) {
         }
     }
 
-    return std::sqrt(images_distance / (image1.GetHeight() * image1.GetWidth()));
+    return std::sqrt(images_distance / static_cast<double>(image1.GetHeight() * image1.GetWidth()));
 }
 
 double CalcPixelsDistance(const Pixel<uint8_t>& pixel1, const Pixel<uint8_t>& pixel2) {
